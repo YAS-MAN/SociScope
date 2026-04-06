@@ -1,58 +1,96 @@
-import { Link } from 'react-router-dom';
-import { Glasses, Mail, MapPin, ExternalLink, Heart } from 'lucide-react';
+import { Link } from "react-router-dom";
+import {
+  Glasses,
+  Mail,
+  MapPin,
+  ExternalLink,
+  Instagram,
+  Phone,
+} from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
-    'Belajar Sosiologi': [
-      { label: 'Kacamata Sosiologi', to: '/kacamata' },
-      { label: 'Teori Sosiologi', to: '/teori' },
-      { label: 'Teori Recommender', to: '/teori' },
-      { label: 'Kasus Interaktif', to: '/kacamata' }
+    "Belajar Sosiologi": [
+      { label: "Kacamata Sosiologi", to: "/kacamata" },
+      { label: "Teori Sosiologi", to: "/teori" },
+      { label: "Teori Recommender", to: "/teori" },
+      { label: "Kasus Interaktif", to: "/kacamata" },
     ],
-    'Karir': [
-      { label: 'Profesi Lulusan', to: '/karir' },
-      { label: 'Peta Karir', to: '/karir' },
-      { label: 'Skill yang Dibutuhkan', to: '/karir' },
-      { label: 'Tips Sukses', to: '/karir' }
+    Karir: [
+      { label: "Profesi Lulusan", to: "/karir" },
+      { label: "Peta Karir", to: "/karir" },
+      { label: "Skill yang Dibutuhkan", to: "/karir" },
+      { label: "Tips Sukses", to: "/karir" },
     ],
-    'Referensi': [
-      { label: 'Buku Sosiologi', to: '/' },
-      { label: 'Jurnal Ilmiah', to: '/' },
-      { label: 'Konferensi', to: '/' },
-      { label: 'Komunitas', to: '/' }
-    ]
+    Referensi: [
+      { label: "Buku Sosiologi", to: "/" },
+      { label: "Jurnal Ilmiah", to: "/" },
+      { label: "Konferensi", to: "/" },
+      { label: "Komunitas", to: "/" },
+    ],
   };
 
   return (
-    <footer className="bg-navy text-white">
+    <footer className="bg-navy text-white relative z-10">
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Brand */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-10">
+          {/* Brand & Kontak - Bagian yang dirombak posisinya */}
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-3 mb-4 group">
-              <div className="w-12 h-12 bg-gradient-to-br from-sage to-sage-light rounded-xl flex items-center justify-center transition-transform group-hover:scale-105">
+            <Link to="/" className="flex items-center gap-3 mb-6 group w-max">
+              <div className="w-12 h-12 bg-gradient-to-br from-sage to-sage-light rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-lg shadow-sage/20">
                 <Glasses className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h2 className="font-poppins font-bold text-xl">SociScope</h2>
-                <p className="text-sm text-white/60">Lihat Dunia dengan Lensa Sosiologi</p>
+                <h2 className="font-poppins font-bold text-2xl">SociScope</h2>
+                <p className="text-xs text-sage-light font-medium uppercase tracking-widest">
+                  Platform Edukasi
+                </p>
               </div>
             </Link>
-            <p className="text-white/70 text-sm leading-relaxed mb-6 max-w-sm">
-              SociScope adalah platform edukasi sosiologi yang membantu mahasiswa dan masyarakat 
-              memahami dunia sosial melalui perspektif, teori, dan wawasan karir.
+            <p className="text-slate-300 text-sm leading-relaxed mb-8 max-w-sm">
+              Membantu mahasiswa dan masyarakat memahami kompleksitas dunia
+              sosial melalui perspektif yang jernih dan wawasan karir.
             </p>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-sm text-white/70">
-                <Mail className="w-4 h-4 text-sage" />
+
+            {/* INI PERUBAHANNYA: Menggunakan grid 2 kolom (2x2) agar sejajar dan lurus */}
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+              <a
+                href="mailto:hello@sociscope.id"
+                className="flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors group w-max"
+              >
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-sage/20 transition-colors">
+                  <Mail className="w-4 h-4 text-sage" />
+                </div>
                 <span>hello@sociscope.id</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-white/70">
-                <MapPin className="w-4 h-4 text-sage" />
-                <span>Indonesia</span>
+              </a>
+              <a
+                href="tel:+6281234567890"
+                className="flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors group w-max"
+              >
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-sage/20 transition-colors">
+                  <Phone className="w-4 h-4 text-sage" />
+                </div>
+                <span>+62 812 3456 7890</span>
+              </a>
+              <a
+                href="https://instagram.com/sociscope.id"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors group w-max"
+              >
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-sage/20 transition-colors">
+                  <Instagram className="w-4 h-4 text-sage" />
+                </div>
+                <span>@sociscope.id</span>
+              </a>
+              <div className="flex items-center gap-3 text-sm text-slate-300 cursor-default">
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                  <MapPin className="w-4 h-4 text-sage" />
+                </div>
+                <span>Jakarta, Indonesia</span>
               </div>
             </div>
           </div>
@@ -60,16 +98,21 @@ export default function Footer() {
           {/* Links */}
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
-              <h3 className="font-semibold text-white mb-4">{title}</h3>
-              <ul className="space-y-2">
-                {links.map(link => (
+              <h3 className="font-poppins font-bold text-white mb-6 uppercase tracking-wider text-sm">
+                {title}
+              </h3>
+              <ul className="space-y-3">
+                {links.map((link) => (
                   <li key={link.label}>
                     <Link
                       to={link.to}
-                      className="text-sm text-white/70 hover:text-amber transition-colors flex items-center gap-1 group"
+                      className="text-sm text-slate-400 hover:text-sage-light transition-all flex items-center gap-2 group w-max"
                     >
-                      {link.label}
-                      <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <span className="relative">
+                        {link.label}
+                        <span className="absolute -bottom-1 left-0 w-0 h-px bg-sage transition-all group-hover:w-full" />
+                      </span>
+                      <ExternalLink className="w-3 h-3 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all text-sage-light" />
                     </Link>
                   </li>
                 ))}
@@ -80,18 +123,30 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-white/10">
+      <div className="border-t border-white/10 bg-black/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-white/60 text-center md:text-left">
-              {currentYear} SociScope. Dibuat dengan{' '}
-              <Heart className="w-4 h-4 inline text-red-400 fill-red-400" /> untuk pembelajar sosiologi.
+          <div className="flex flex-col md:flex-row items-center relative gap-4 md:gap-0">
+            {/* 1. Spacer Kiri (Kosong, untuk menyeimbangkan layout) */}
+            <div className="hidden md:block flex-1"></div>
+
+            {/* 2. Copyright Tengah (Akan otomatis di tengah layar) */}
+            <p className="text-sm text-slate-400 flex items-center justify-center flex-1">
+              © {currentYear} SociScope.
             </p>
-            <div className="flex items-center gap-6">
-              <Link to="/" className="text-sm text-white/60 hover:text-white transition-colors">
+
+            {/* 3. Menu Kanan */}
+            <div className="flex items-center justify-center md:justify-end gap-6 flex-1">
+              <Link
+                to="/privasi"
+                className="text-sm text-slate-400 hover:text-white transition-colors"
+              >
                 Kebijakan Privasi
               </Link>
-              <Link to="/" className="text-sm text-white/60 hover:text-white transition-colors">
+              <span className="text-slate-600">•</span>
+              <Link
+                to="/syarat"
+                className="text-sm text-slate-400 hover:text-white transition-colors"
+              >
                 Syarat Penggunaan
               </Link>
             </div>

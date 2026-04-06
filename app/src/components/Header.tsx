@@ -7,6 +7,7 @@ const navItems = [
   { id: "/kacamata", label: "Kacamata", icon: Glasses },
   { id: "/teori", label: "Teori", icon: BookOpen },
   { id: "/karir", label: "Karir", icon: Briefcase },
+  // Kita tambahkan menu ini ke navbar utama sesuai permintaan klien
 ];
 
 export default function Header() {
@@ -14,10 +15,15 @@ export default function Header() {
   const location = useLocation();
   
   // 1. Deteksi apakah kita sedang di halaman dengan background terang
-  const isLightPage = location.pathname === '/kacamata' || location.pathname === '/karir';
+  // Klien ingin halaman Kebijakan/Syarat juga dianggap 'terang' agar teksnya gelap.
+  const isLightPage = 
+    location.pathname === '/kacamata' || 
+    location.pathname === '/karir' ||
+    location.pathname === '/privasi' ||
+    location.pathname === '/syarat';
   
   // 2. Tentukan kapan harus pakai teks warna gelap (navy)
-  // Pakai teks gelap JIKA sedang di-scroll ATAU sedang di halaman terang
+  // Pakai teks gelap JIKA di-scroll ATAU di halaman terang
   const useDarkText = isScrolled || isLightPage;
 
   useEffect(() => {
@@ -34,7 +40,7 @@ export default function Header() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200 h-16' // Saat scroll (Putih Blur)
-          : 'bg-transparent h-20 border-b border-transparent' // Saat di atas (Polos menyatu dengan background halaman)
+          : 'bg-transparent h-20 border-b border-transparent' // Saat di atas
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
@@ -60,6 +66,7 @@ export default function Header() {
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map(item => {
               const isActive = location.pathname === item.id;
+              
               return (
                 <Link
                   key={item.id}

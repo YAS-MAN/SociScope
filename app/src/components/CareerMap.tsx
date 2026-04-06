@@ -1,273 +1,351 @@
-import { useState } from 'react';
-import { GraduationCap, Briefcase, TrendingUp, Award, ArrowRight } from 'lucide-react';
+import { useState, useEffect } from "react";
+import {
+  GraduationCap,
+  Briefcase,
+  TrendingUp,
+  Award,
+  CheckCircle2,
+} from "lucide-react";
+import { careers } from "@/data/sociologyData";
 
-interface CareerStage {
-  id: string;
-  title: string;
-  description: string;
-  duration: string;
-  skills: string[];
-  opportunities: string[];
+// Menerima ID karir yang sedang diklik user di halaman utama
+interface CareerMapProps {
+  selectedCareerId: string | null;
 }
-
-const careerStages: CareerStage[] = [
-  {
-    id: 'freshman',
-    title: 'Tahun 1-2: Eksplorasi',
-    description: 'Membangun fondasi pemahaman sosiologi dan mengeksplorasi minat',
-    duration: 'Semester 1-4',
-    skills: ['Membaca teks akademik', 'Menulis esai', 'Dasar statistik', 'Observasi sosial'],
-    opportunities: ['Organisasi kampus', 'Volunteer komunitas', 'Diskusi ilmiah']
-  },
-  {
-    id: 'sophomore',
-    title: 'Tahun 3: Spesialisasi',
-    description: 'Memilih fokus dan membangun keahlian spesifik',
-    duration: 'Semester 5-6',
-    skills: ['Metode penelitian', 'Analisis data', 'Software statistik', 'Wawancara'],
-    opportunities: ['Asisten riset dosen', 'Magang NGO', 'Lomba karya tulis']
-  },
-  {
-    id: 'junior',
-    title: 'Tahun 4: Aplikasi',
-    description: 'Menerapkan pengetahuan dalam praktik dan membangun portofolio',
-    duration: 'Semester 7-8',
-    skills: ['Penelitian mandiri', 'Analisis kebijakan', 'Presentasi', 'Networking'],
-    opportunities: ['Skripsi/TA', 'Magang korporasi', 'Konferensi']
-  },
-  {
-    id: 'graduate',
-    title: 'Lulusan: Transisi',
-    description: 'Memasuki dunia kerja atau melanjutkan studi',
-    duration: '0-2 tahun',
-    skills: ['Job hunting', 'Wawancara kerja', 'Adaptasi profesional'],
-    opportunities: ['Entry level positions', 'Beasiswa S2', 'Startup sosial']
-  },
-  {
-    id: 'professional',
-    title: 'Profesional: Pengembangan',
-    description: 'Membangun karir dan keahlian lanjutan',
-    duration: '2-5 tahun',
-    skills: ['Kepemimpinan', 'Manajemen proyek', 'Spesialisasi domain', 'Mentoring'],
-    opportunities: ['Promosi jabatan', 'Sertifikasi profesional', 'Jaringan industri']
-  },
-  {
-    id: 'expert',
-    title: 'Expert: Kepemimpinan',
-    description: 'Menjadi pemimpin pemikiran dan mengubah sistem',
-    duration: '5+ tahun',
-    skills: ['Strategic thinking', 'Pengaruh kebijakan', 'Inovasi sosial', 'Publikasi'],
-    opportunities: ['Kepala divisi', 'Dosen/Peneliti senior', 'Konsultan senior', 'Pengusaha sosial']
-  }
-];
 
 const careerPaths = [
   {
-    id: 'academia',
-    title: 'Jalur Akademik',
+    id: "academia",
+    title: "Jalur Akademik",
     icon: GraduationCap,
-    color: 'from-navy to-navy-light',
-    stages: ['Dosen Asisten', 'Dosen', 'Lektor Kepala', 'Profesor', 'Guru Besar']
+    color: "from-navy to-navy-light",
+    textColor: "text-navy",
+    stages: [
+      "Asisten Peneliti",
+      "Dosen Muda",
+      "Lektor",
+      "Lektor Kepala",
+      "Guru Besar (Profesor)",
+    ],
   },
   {
-    id: 'corporate',
-    title: 'Jalur Korporat',
+    id: "corporate",
+    title: "Jalur Korporasi (HR/CSR)",
     icon: Briefcase,
-    color: 'from-sage to-sage-light',
-    stages: ['Analis/Staff', 'Supervisor', 'Manager', 'Senior Manager', 'Director']
+    color: "from-amber to-amber-light", // <-- Diperbaiki ke amber
+    textColor: "text-amber",
+    stages: [
+      "Officer/Staff",
+      "Supervisor",
+      "Asst. Manager",
+      "Manager",
+      "Director / VP",
+    ],
   },
   {
-    id: 'development',
-    title: 'Jalur Development',
+    id: "development",
+    title: "Jalur NGO / Development",
     icon: TrendingUp,
-    color: 'from-amber to-amber-light',
-    stages: ['Program Officer', 'Project Manager', 'Country Director', 'Regional Director', 'Global Lead']
+    color: "from-sage to-sage-light", // <-- Diperbaiki ke sage
+    textColor: "text-sage",
+    stages: [
+      "Project Officer",
+      "Program Manager",
+      "Country Director",
+      "Regional Director",
+      "Global Lead",
+    ],
   },
   {
-    id: 'consultant',
-    title: 'Jalur Konsultan',
+    id: "consultant",
+    title: "Jalur Riset & Konsultan",
     icon: Award,
-    color: 'from-purple-600 to-purple-400',
-    stages: ['Junior Consultant', 'Consultant', 'Senior Consultant', 'Principal', 'Partner']
-  }
+    color: "from-slate-600 to-slate-400",
+    textColor: "text-slate-600",
+    stages: [
+      "Junior Researcher",
+      "Research Associate",
+      "Senior Consultant",
+      "Principal",
+      "Partner",
+    ],
+  },
 ];
-
-export default function CareerMap() {
-  const [activeStage, setActiveStage] = useState<string>('freshman');
+export default function CareerMap({ selectedCareerId }: CareerMapProps) {
+  const [activeStage, setActiveStage] = useState<string>("year1_2");
   const [activePath, setActivePath] = useState<string | null>(null);
 
+  // Jika tidak ada karir yang dipilih, gunakan default "Peneliti Sosial" sebagai contoh
+  const activeCareerData =
+    careers.find((c) => c.id === selectedCareerId) || careers[0];
+
+  // Efek untuk reset tab ke tahun 1 jika user mengganti pilihan karir
+  useEffect(() => {
+    setActiveStage("year1_2");
+  }, [selectedCareerId]);
+
+  // Data struktur tampilan timeline
+  const timelineStructure = [
+    {
+      id: "year1_2",
+      title: "Tahun 1-2: Eksplorasi",
+      duration: "Semester 1-4",
+      data: activeCareerData.roadmap.year1_2,
+    },
+    {
+      id: "year3",
+      title: "Tahun 3: Spesialisasi",
+      duration: "Semester 5-6",
+      data: activeCareerData.roadmap.year3,
+    },
+    {
+      id: "year4",
+      title: "Tahun 4: Aplikasi",
+      duration: "Semester 7-8",
+      data: activeCareerData.roadmap.year4,
+    },
+    {
+      id: "freshgrad",
+      title: "Lulusan Baru",
+      duration: "0-2 Tahun",
+      data: activeCareerData.roadmap.freshgrad,
+    },
+  ];
+
   return (
-    <div className="space-y-8">
-      {/* Timeline Perkuliahan */}
-      <div className="bg-white rounded-2xl shadow-lg p-6">
-        <h3 className="text-xl font-poppins font-bold text-navy mb-6 flex items-center gap-2">
-          <GraduationCap className="w-6 h-6 text-sage" />
-          Perjalanan Perkuliahan
+    <div className="space-y-12">
+      {/* 1. Timeline Perkuliahan (Sekarang Dinamis!) */}
+      <div>
+        <div className="mb-8">
+          <h3 className="text-2xl font-poppins font-bold text-navy flex items-center gap-3">
+            <GraduationCap className="w-8 h-8 text-amber p-1.5 bg-amber/10 rounded-lg shrink-0" />
+            Peta Perjalanan Mahasiswa
+          </h3>
+          <p className="text-slate-500 text-sm mt-2 ml-11">
+            Menampilkan roadmap untuk fokus profesi:{" "}
+            <span className="font-bold text-navy">
+              {activeCareerData.title}
+            </span>
+          </p>
+        </div>
+
+        {/* Timeline Interaktif */}
+        <div className="relative mb-10">
+          {/* Garis Timeline - Diperbaiki posisinya ke top-5 (mobile) & top-6 (desktop) */}
+          <div className="absolute top-5 md:top-6 left-0 right-0 h-1.5 bg-slate-200 rounded-full z-0" />
+
+          <div className="relative flex justify-between z-10">
+            {timelineStructure.map((stage, index) => {
+              const isActive = activeStage === stage.id;
+              return (
+                <button
+                  key={stage.id}
+                  onClick={() => setActiveStage(stage.id)}
+                  className="relative flex flex-col items-center group w-1/4"
+                >
+                  <div
+                    className={`w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center font-bold transition-all duration-300 z-10 ${
+                      isActive
+                        ? "bg-navy text-white scale-110 shadow-[0_0_15px_rgba(26,35,65,0.3)] rotate-3"
+                        : "bg-white border-2 border-slate-200 text-slate-400 group-hover:border-navy/50 group-hover:text-navy"
+                    }`}
+                  >
+                    {index + 1}
+                  </div>
+                  <span
+                    className={`mt-4 text-[10px] md:text-sm font-semibold text-center transition-colors bg-white px-2 ${
+                      isActive
+                        ? "text-navy"
+                        : "text-slate-400 group-hover:text-navy"
+                    }`}
+                  >
+                    {stage.title.split(":")[0]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Stage Detail (Isinya berubah sesuai profesi yang diklik) */}
+        <div className="bg-slate-50 rounded-3xl p-6 md:p-8 border border-slate-100 relative overflow-hidden min-h-[250px]">
+          {timelineStructure.map(
+            (stage) =>
+              activeStage === stage.id && (
+                <div key={stage.id} className="animate-fadeIn">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+                    <h4 className="text-xl font-poppins font-bold text-navy">
+                      {stage.title}
+                    </h4>
+                    <span className="text-xs font-bold px-3 py-1 bg-white border border-slate-200 rounded-full text-slate-500 shadow-sm inline-block w-max">
+                      ⏳ {stage.duration}
+                    </span>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6 md:gap-10">
+                    <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                      <h5 className="text-sm font-bold text-navy mb-4 flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-sage" /> Fokus
+                        Skill Sosiologi
+                      </h5>
+                      <div className="flex flex-wrap gap-2">
+                        {stage.data.skills.map((skill, i) => (
+                          <span
+                            key={i}
+                            className="text-xs font-medium px-3 py-1.5 bg-sage/10 text-sage-dark rounded-lg border border-sage/20"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                      <h5 className="text-sm font-bold text-navy mb-4 flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4 text-amber" /> Peluang /
+                        Aktivitas
+                      </h5>
+                      <div className="flex flex-wrap gap-2">
+                        {stage.data.opps.map((opp, i) => (
+                          <span
+                            key={i}
+                            className="text-xs font-medium px-3 py-1.5 bg-amber/10 text-amber-dark rounded-lg border border-amber/20"
+                          >
+                            {opp}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ),
+          )}
+        </div>
+      </div>
+
+      {/* 2. Jalur Karir Profesional */}
+      <div className="pt-8 border-t border-slate-200">
+        <h3 className="text-2xl font-poppins font-bold text-navy mb-8 flex items-center gap-3">
+          <Briefcase className="w-8 h-8 text-navy p-1.5 bg-navy/10 rounded-lg shrink-0" />
+          Proyeksi Jalur Karir Lanjutan
         </h3>
 
-        {/* Timeline */}
-        <div className="relative">
-          {/* Timeline line */}
-          <div className="absolute top-6 left-0 right-0 h-1 bg-slate-200 rounded-full" />
-          
-          {/* Timeline points */}
-          <div className="relative flex justify-between">
-            {careerStages.slice(0, 4).map((stage, index) => (
-              <button
-                key={stage.id}
-                onClick={() => setActiveStage(stage.id)}
-                className={`relative flex flex-col items-center group ${
-                  activeStage === stage.id ? 'z-10' : ''
+        {/* DITAMBAHKAN items-start AGAR KOTAK TIDAK STRETCH / NGAMBANG */}
+        <div className="grid md:grid-cols-2 gap-5 items-start">
+          {careerPaths.map((path) => {
+            const isActive = activePath === path.id;
+            return (
+              <div
+                key={path.id}
+                className={`w-full rounded-2xl border-2 transition-all duration-300 overflow-hidden bg-white ${
+                  isActive
+                    ? "border-navy shadow-lg shadow-navy/5"
+                    : "border-slate-100 hover:border-navy/40 hover:shadow-md"
                 }`}
               >
+                {/* AREA KLIK DIPERBESAR FULL 1 KOTAK HEADER */}
+                <button
+                  onClick={() => setActivePath(isActive ? null : path.id)}
+                  className="w-full p-5 flex items-center gap-4 text-left focus:outline-none cursor-pointer"
+                >
+                  <div
+                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${path.color} flex items-center justify-center shrink-0 shadow-inner`}
+                  >
+                    <path.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-poppins font-bold text-navy text-lg">
+                      {path.title}
+                    </h4>
+                    <p
+                      className={`text-xs mt-1 font-medium transition-colors ${isActive ? path.textColor : "text-slate-400"}`}
+                    >
+                      {isActive ? "Tutup Detail" : "Klik untuk melihat tahapan"}
+                    </p>
+                  </div>
+                </button>
+
+                {/* ANIMASI DROPDOWN */}
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                    activeStage === stage.id
-                      ? 'bg-gradient-to-br from-navy to-sage text-white scale-110 shadow-lg'
-                      : 'bg-white border-2 border-slate-300 text-slate-500 group-hover:border-sage'
+                  className={`grid transition-all duration-500 ease-in-out px-6 ${
+                    isActive
+                      ? "grid-rows-[1fr] opacity-100 pb-6 border-t border-slate-100 pt-6"
+                      : "grid-rows-[0fr] opacity-0 pb-0 border-t-0 border-transparent pt-0"
                   }`}
                 >
-                  {index + 1}
-                </div>
-                <span
-                  className={`mt-2 text-xs font-medium text-center max-w-[80px] ${
-                    activeStage === stage.id ? 'text-navy' : 'text-slate-500'
-                  }`}
-                >
-                  {stage.title.split(':')[0]}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+                  <div className="overflow-hidden">
+                    {/* DESAIN BARU: TIMELINE VERTIKAL */}
+                    <div className="relative space-y-0">
+                      {/* Garis vertikal - DIPERBAIKI: left 13px pas di tengah lingkaran ukuran w-7 (28px) */}
+                      <div className="absolute left-[13px] top-4 bottom-4 w-0.5 bg-slate-200 z-0"></div>
 
-        {/* Stage Detail */}
-        <div className="mt-8 p-6 bg-slate-50 rounded-xl">
-          {careerStages.slice(0, 4).map(stage => (
-            activeStage === stage.id && (
-              <div key={stage.id} className="animate-fadeIn">
-                <div className="flex items-center justify-between mb-4">
-                  <h4 className="text-lg font-semibold text-navy">{stage.title}</h4>
-                  <span className="text-sm text-sage font-medium">{stage.duration}</span>
-                </div>
-                <p className="text-slate-600 mb-4">{stage.description}</p>
-                
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <h5 className="text-sm font-medium text-navy mb-2">Skill yang Dibangun</h5>
-                    <div className="flex flex-wrap gap-2">
-                      {stage.skills.map((skill, i) => (
-                        <span
-                          key={i}
-                          className="text-xs px-3 py-1 bg-navy/10 text-navy rounded-full"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h5 className="text-sm font-medium text-navy mb-2">Peluang</h5>
-                    <div className="flex flex-wrap gap-2">
-                      {stage.opportunities.map((opp, i) => (
-                        <span
-                          key={i}
-                          className="text-xs px-3 py-1 bg-sage/10 text-sage rounded-full"
-                        >
-                          {opp}
-                        </span>
-                      ))}
+                      {path.stages.map((stage, i) => {
+                        const isLast = i === path.stages.length - 1;
+                        return (
+                          <div
+                            key={i}
+                            className="flex items-center gap-4 relative z-10 py-3"
+                          >
+                            <div
+                              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-4 border-white ${
+                                isLast
+                                  ? "bg-amber text-navy"
+                                  : "bg-slate-200 text-slate-500"
+                              }`}
+                            >
+                              {i + 1}
+                            </div>
+                            <span
+                              className={`text-sm ${isLast ? "text-navy font-bold" : "text-slate-600 font-medium"}`}
+                            >
+                              {stage} {isLast && "🎯"}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
               </div>
-            )
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* Jalur Karir Profesional */}
-      <div className="bg-white rounded-2xl shadow-lg p-6">
-        <h3 className="text-xl font-poppins font-bold text-navy mb-6 flex items-center gap-2">
-          <TrendingUp className="w-6 h-6 text-sage" />
-          Jalur Karir Profesional
+      {/* 3. Tips Sukses (Sama seperti sebelumnya) */}
+      <div className="bg-navy rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
+        <h3 className="text-xl font-poppins font-bold mb-8 relative z-10">
+          Tips Cepat Adaptasi Karir
         </h3>
-
-        <div className="grid md:grid-cols-2 gap-4">
-          {careerPaths.map(path => (
-            <button
-              key={path.id}
-              onClick={() => setActivePath(activePath === path.id ? null : path.id)}
-              className={`p-4 rounded-xl border-2 text-left transition-all ${
-                activePath === path.id
-                  ? 'border-amber bg-amber/5'
-                  : 'border-slate-200 hover:border-sage/50'
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${path.color} flex items-center justify-center`}>
-                  <path.icon className="w-5 h-5 text-white" />
-                </div>
-                <h4 className="font-semibold text-navy">{path.title}</h4>
-              </div>
-
-              {activePath === path.id && (
-                <div className="mt-4 pt-4 border-t border-slate-200 animate-fadeIn">
-                  <div className="space-y-3">
-                    {path.stages.map((stage, i) => (
-                      <div key={i} className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-full bg-sage/20 text-sage flex items-center justify-center text-xs font-bold">
-                          {i + 1}
-                        </div>
-                        <span className="text-sm text-slate-700">{stage}</span>
-                        {i < path.stages.length - 1 && (
-                          <ArrowRight className="w-4 h-4 text-slate-300 ml-auto" />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {activePath !== path.id && (
-                <p className="text-sm text-slate-500">
-                  Klik untuk melihat jenjang karir
-                </p>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Tips Sukses */}
-      <div className="bg-gradient-to-r from-navy to-navy-light rounded-2xl p-6 text-white">
-        <h3 className="text-xl font-poppins font-bold mb-4">Tips Sukses Lulusan Sosiologi</h3>
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="bg-white/10 rounded-xl p-4">
-            <div className="w-10 h-10 bg-amber rounded-lg flex items-center justify-center mb-3">
-              <span className="text-lg font-bold">1</span>
+        <div className="grid md:grid-cols-3 gap-6 relative z-10">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10 hover:bg-white/20 transition-colors">
+            <div className="w-10 h-10 bg-amber rounded-xl flex items-center justify-center mb-4 text-navy font-bold shadow-lg">
+              1
             </div>
-            <h4 className="font-semibold mb-2">Bangun Skill Teknis</h4>
-            <p className="text-sm text-white/80">
-              Pelajari tools: SPSS/R/Python untuk data, Canva/Figma untuk desain, dan platform digital marketing.
+            <h4 className="font-bold mb-2">Kuasai Tools Teknis</h4>
+            <p className="text-xs text-white/70 leading-relaxed">
+              Sosiolog modern butuh alat. Pelajari Excel/SPSS/R untuk data
+              kuantitatif, dan NVivo/ATLAS.ti untuk kualitatif.
             </p>
           </div>
-          <div className="bg-white/10 rounded-xl p-4">
-            <div className="w-10 h-10 bg-amber rounded-lg flex items-center justify-center mb-3">
-              <span className="text-lg font-bold">2</span>
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10 hover:bg-white/20 transition-colors">
+            <div className="w-10 h-10 bg-sage rounded-xl flex items-center justify-center mb-4 text-navy font-bold shadow-lg">
+              2
             </div>
-            <h4 className="font-semibold mb-2">Ciptakan Portofolio</h4>
-            <p className="text-sm text-white/80">
-              Dokumentasikan setiap proyek, riset, dan magang. Buat blog atau LinkedIn aktif.
+            <h4 className="font-bold mb-2">Bikin Portofolio Riset</h4>
+            <p className="text-xs text-white/70 leading-relaxed">
+              Jangan cuma di kepala. Kumpulkan hasil observasi, esai, dan riset
+              kuliahmu jadi dokumen rapi (Blog/LinkedIn).
             </p>
           </div>
-          <div className="bg-white/10 rounded-xl p-4">
-            <div className="w-10 h-10 bg-amber rounded-lg flex items-center justify-center mb-3">
-              <span className="text-lg font-bold">3</span>
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10 hover:bg-white/20 transition-colors">
+            <div className="w-10 h-10 bg-slate-300 rounded-xl flex items-center justify-center mb-4 text-navy font-bold shadow-lg">
+              3
             </div>
-            <h4 className="font-semibold mb-2">Jaringan & Komunitas</h4>
-            <p className="text-sm text-white/80">
-              Bergabung dengan asosiasi sosiologi, ikuti webinar, dan bangun relasi dengan praktisi.
+            <h4 className="font-bold mb-2">Perluas Jangkauan</h4>
+            <p className="text-xs text-white/70 leading-relaxed">
+              Ikut konferensi, gabung NGO volunteer, dan ngobrol sama senior.
+              Relasi adalah kunci di ilmu sosial.
             </p>
           </div>
         </div>

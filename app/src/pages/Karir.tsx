@@ -11,22 +11,54 @@ import {
   BarChart3, 
   MessageCircle,
   ChevronRight,
-  Target
+  Target,
+  Trophy,
+  Calendar,
+  ArrowRight
 } from 'lucide-react';
 import CareerMap from '@/components/CareerMap';
 import { careers } from '@/data/sociologyData';
+
+// --- DATA DUMMY UNTUK ARTIKEL PRESTASI ---
+const achievements = [
+  {
+    id: 1,
+    title: "Kembangkan Inovasi Pemetaan Sosial Desa, Tim Alumni Sosiologi UNESA Raih Penghargaan Nasional",
+    category: "Pemberdayaan Masyarakat",
+    date: "12 Maret 2026",
+    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800",
+    snippet: "Berbekal teori pemberdayaan dan metode riset aksi, kolaborasi apik antara sosiologi dan teknologi berhasil memetakan daerah rawan stunting dengan presisi tinggi..."
+  },
+  {
+    id: 2,
+    title: "Dari Kelas ke Kebijakan: Mahasiswa Loloskan Rekomendasi RUU Kesejahteraan Ibu dan Anak",
+    category: "Advokasi Kebijakan",
+    date: "28 Februari 2026",
+    image: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800",
+    snippet: "Menggunakan kacamata interseksionalitas, kajian mendalam mengenai beban ganda pekerja perempuan sukses menjadi naskah akademik yang diterima di DPR RI..."
+  },
+  {
+    id: 3,
+    title: "Tembus Jurnal Internasional Q1 Lewat Riset Fenomena Gentrifikasi Perkotaan",
+    category: "Publikasi Ilmiah",
+    date: "15 Januari 2026",
+    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800",
+    snippet: "Penelitian yang membedah pergeseran struktur kelas dan ruang di kota metropolitan menarik perhatian akademisi global dan membuka peluang beasiswa S2..."
+  }
+];
 
 export default function Karir() {
   const [selectedCareer, setSelectedCareer] = useState<string | null>(null);
 
   return (
     <div className="min-h-screen bg-slate-50 relative overflow-hidden py-24">
-      {/* Efek Latar Belakang Terang - Disesuaikan agar soft */}
+      {/* Efek Latar Belakang */}
       <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-amber/20 rounded-full blur-[120px] animate-pulse" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-navy/10 rounded-full blur-[100px]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header Halaman - Teks Gelap */}
+        
+        {/* HEADER */}
         <div className="text-center mb-16 animate-fadeIn">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-navy/10 border border-navy/20 rounded-full text-sm text-navy font-bold mb-4">
             <Target className="w-4 h-4" />
@@ -40,7 +72,7 @@ export default function Karir() {
           </p>
         </div>
 
-        {/* Career Cards Grid - Light Clean Style */}
+        {/* CAREER CARDS GRID */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
           {careers.map((career, index) => {
             const IconComponent = { 
@@ -61,7 +93,6 @@ export default function Karir() {
                 style={{ animationDelay: `${index * 50}ms` }}
                 onClick={() => setSelectedCareer(isActive ? null : career.id)}
               >
-                {/* Ikon dengan Light Background */}
                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all duration-500 ${
                   isActive 
                     ? 'bg-navy text-white rotate-12 scale-110 shadow-lg shadow-navy/30' 
@@ -80,7 +111,6 @@ export default function Karir() {
                   {career.description}
                 </p>
 
-                {/* ANIMASI DETAIL (Expand/Collapse Smooth) */}
                 <div
                   className={`grid transition-all duration-500 ease-in-out ${
                     isActive
@@ -125,13 +155,73 @@ export default function Karir() {
           })}
         </div>
 
-        {/* Section Peta Karir - Disesuaikan untuk Light Mode */}
-        <div className="relative group">
+        {/* SECTION CAREER MAP */}
+        <div className="relative group mb-24">
           <div className="absolute inset-0 bg-navy/5 rounded-[40px] blur-3xl -z-10 transition-colors" />
           <div className="bg-white rounded-[40px] p-2 sm:p-8 border border-slate-200 shadow-xl">
-            <CareerMap />
+            <CareerMap selectedCareerId={selectedCareer} />
           </div>
         </div>
+
+        {/* SECTION BARU: ARTIKEL CAPAIAN PRESTASI */}
+        <div className="mb-24">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-sage/10 rounded-full text-xs text-sage-dark font-bold mb-3 border border-sage/20">
+                <Trophy className="w-3.5 h-3.5" />
+                Jejak Keberhasilan
+              </div>
+              <h3 className="text-3xl font-poppins font-bold text-navy">
+                Kisah Sukses & Capaian
+              </h3>
+              <p className="text-slate-600 mt-2 max-w-xl">
+                Bukti nyata bagaimana ilmu sosiologi diimplementasikan untuk menciptakan dampak positif di masyarakat luas.
+              </p>
+            </div>
+            <button className="text-sm font-bold text-navy hover:text-sage transition-colors flex items-center gap-2 group w-max">
+              Lihat Semua Artikel
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {achievements.map((item) => (
+              <article key={item.id} className="bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                {/* Gambar Thumbnail */}
+                <div className="relative h-48 overflow-hidden bg-slate-100">
+                  <div className="absolute inset-0 bg-navy/20 group-hover:bg-transparent transition-colors z-10" />
+                  <img 
+                    src={item.image} 
+                    alt={item.title} 
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-navy">
+                    {item.category}
+                  </div>
+                </div>
+                
+                {/* Konten Artikel */}
+                <div className="p-6">
+                  <div className="flex items-center gap-2 text-xs text-slate-500 mb-3 font-medium">
+                    <Calendar className="w-3.5 h-3.5" />
+                    {item.date}
+                  </div>
+                  <h4 className="font-poppins font-bold text-navy text-lg mb-3 line-clamp-3 group-hover:text-sage transition-colors leading-snug">
+                    {item.title}
+                  </h4>
+                  <p className="text-slate-600 text-sm leading-relaxed mb-5 line-clamp-3">
+                    {item.snippet}
+                  </p>
+                  <button className="text-sm font-bold text-sage flex items-center gap-2 group/btn">
+                    Baca Selengkapnya
+                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
   );

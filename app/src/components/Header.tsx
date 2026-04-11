@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, Glasses, BookOpen, Briefcase, Home } from "lucide-react";
+import { Menu, X, Glasses, BookOpen, Briefcase, Home, Users } from "lucide-react";
 
 const navItems = [
   { id: "/", label: "Beranda", icon: Home },
   { id: "/kacamata", label: "Kacamata", icon: Glasses },
   { id: "/teori", label: "Teori", icon: BookOpen },
   { id: "/karir", label: "Karir", icon: Briefcase },
-  // Kita tambahkan menu ini ke navbar utama sesuai permintaan klien
+  { id: "/jejaring", label: "Jejaring", icon: Users },
 ];
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   
   // 1. Deteksi apakah kita sedang di halaman dengan background terang
@@ -19,6 +20,7 @@ export default function Header() {
   const isLightPage = 
     location.pathname === '/kacamata' || 
     location.pathname === '/karir' ||
+    location.pathname === '/jejaring' ||
     location.pathname === '/privasi' ||
     location.pathname === '/syarat';
   
@@ -35,8 +37,14 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
   return (
-    <header
+    <>
+      <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200 h-16' // Saat scroll (Putih Blur)
@@ -89,11 +97,57 @@ export default function Header() {
           </nav>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
-             <Menu className={useDarkText ? "text-navy" : "text-white"} />
-          </div>
+          <button 
+            className="md:hidden p-2 -mr-2 relative z-[60]"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+             {isMobileMenuOpen ? (
+               <X className="w-6 h-6 text-navy" />
+             ) : (
+               <Menu className={`w-6 h-6 ${useDarkText ? "text-navy" : "text-white"}`} />
+             )}
+          </button>
         </div>
       </div>
-    </header>
+
+      </header>
+
+      {/* Mobile Drawer (Dipindahkan ke luar <header> untuk menghindari clipping) */}
+      <div 
+        className={`fixed inset-0 bg-navy z-[100] transition-transform duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        } md:hidden flex flex-col pt-24 px-6 pb-8`}
+      >
+        {/* Tombol Close terpisah di dalam Drawer agar selalu bisa diklik */}
+        <button 
+          className="absolute top-6 right-6 p-2 bg-white/10 rounded-full"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          <X className="w-6 h-6 text-white" />
+        </button>
+
+        <div className="flex-1 overflow-y-auto">
+          <nav className="flex flex-col gap-2">
+            {navItems.map(item => {
+              const isActive = location.pathname === item.id;
+              return (
+                <Link
+                  key={item.id}
+                  to={item.id}
+                  className={`px-4 py-4 rounded-xl text-base font-semibold flex items-center gap-4 transition-all ${
+                    isActive
+                      ? 'bg-amber text-navy shadow-md'
+                      : 'bg-white/5 text-white hover:bg-white/10'
+                  }`}
+                >
+                  <item.icon className="w-5 h-5" />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      </div>
+    </>
   );
 }

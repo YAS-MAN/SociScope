@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Glasses,
   Mail,
@@ -9,27 +9,50 @@ import {
 } from "lucide-react";
 
 export default function Footer() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
     "Belajar Sosiologi": [
       { label: "Kacamata Sosiologi", to: "/kacamata" },
       { label: "Teori Sosiologi", to: "/teori" },
-      { label: "Teori Recommender", to: "/teori" },
-      { label: "Kasus Interaktif", to: "/kacamata" },
+      { label: "Teori Recommender", to: "/teori#recommender" },
+      { label: "Uji Analisis", to: "/kacamata#uji-analisis" }, // <-- Diperbarui
     ],
     Karir: [
-      { label: "Profesi Lulusan", to: "/karir" },
-      { label: "Peta Karir", to: "/karir" },
-      { label: "Skill yang Dibutuhkan", to: "/karir" },
-      { label: "Tips Sukses", to: "/karir" },
+      { label: "Profesi Lulusan", to: "/karir#profesi" },
+      { label: "Peta Karir", to: "/karir#peta" },
+      { label: "Capaian Alumni", to: "/karir#capaian" }, // <-- Diperbarui
+      { label: "Tips Sukses", to: "/karir#tips" },
     ],
     Referensi: [
       { label: "Buku Sosiologi", to: "/" },
       { label: "Jurnal Ilmiah", to: "/" },
       { label: "Konferensi", to: "/" },
-      { label: "Komunitas", to: "/" },
+      { label: "Jejaring (Komunitas)", to: "/jejaring" },
     ],
+  };
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, to: string) => {
+    const [targetPath, targetHash] = to.split('#');
+
+    // Jika berada di halaman yang sama
+    if (pathname === targetPath || (pathname === '/' && targetPath === '')) {
+      e.preventDefault();
+      if (targetHash) {
+        const el = document.getElementById(targetHash);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          // Jika tidak ada elemennya, kita paksa window location agar hash terganti
+          window.location.href = to;
+          window.location.reload();
+        }
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
   };
 
   return (
@@ -106,6 +129,7 @@ export default function Footer() {
                   <li key={link.label}>
                     <Link
                       to={link.to}
+                      onClick={(e) => handleLinkClick(e, link.to)}
                       className="text-sm text-slate-400 hover:text-sage-light transition-all flex items-center gap-2 group w-max"
                     >
                       <span className="relative">

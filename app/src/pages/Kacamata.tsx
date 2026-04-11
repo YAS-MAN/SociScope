@@ -35,11 +35,10 @@ export default function Kacamata() {
             return (
               <div
                 key={concept.id}
-                className={`group p-8 rounded-[32px] border transition-all duration-500 cursor-pointer animate-fadeIn bg-white ${
-                  isActive
+                className={`group p-8 rounded-[32px] border transition-all duration-500 cursor-pointer animate-fadeIn bg-white ${isActive
                     ? "border-sage shadow-xl ring-4 ring-sage/10"
                     : "border-slate-200 hover:border-sage/50 hover:shadow-lg shadow-sm"
-                }`}
+                  }`}
                 style={{ animationDelay: `${index * 100}ms` }}
                 onClick={() => setSelectedConcept(isActive ? null : concept.id)}
               >
@@ -53,11 +52,10 @@ export default function Kacamata() {
                     </p>
                   </div>
                   <div
-                    className={`w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center transition-all duration-500 ${
-                      isActive
+                    className={`w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center transition-all duration-500 ${isActive
                         ? "bg-sage text-white rotate-12 scale-110 shadow-lg shadow-sage/30"
                         : "bg-sage/10 text-sage group-hover:scale-110 group-hover:bg-sage/20"
-                    }`}
+                      }`}
                   >
                     <Lightbulb className="w-7 h-7" />
                   </div>
@@ -72,11 +70,10 @@ export default function Kacamata() {
                   {concept.keyPoints.map((point, i) => (
                     <span
                       key={i}
-                      className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors border ${
-                        isActive 
-                          ? "bg-sage/10 text-sage border-sage/20" 
+                      className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors border ${isActive
+                          ? "bg-sage/10 text-sage border-sage/20"
                           : "bg-slate-50 text-slate-500 border-slate-100 group-hover:bg-sage/5 group-hover:text-sage"
-                      }`}
+                        }`}
                     >
                       {point}
                     </span>
@@ -85,11 +82,10 @@ export default function Kacamata() {
 
                 {/* ANIMASI DETAIL KASUS (Expand/Collapse Smooth) */}
                 <div
-                  className={`grid transition-all duration-500 ease-in-out ${
-                    isActive
+                  className={`grid transition-all duration-500 ease-in-out ${isActive
                       ? "grid-rows-[1fr] opacity-100 mt-6 pt-6 border-t border-slate-100"
                       : "grid-rows-[0fr] opacity-0 mt-0 pt-0 border-t-0 border-transparent"
-                  }`}
+                    }`}
                 >
                   <div className="overflow-hidden">
                     <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
@@ -115,17 +111,15 @@ export default function Kacamata() {
 
                 {/* Indikator Klik */}
                 <div
-                  className={`mt-6 flex items-center gap-2 text-sm font-bold transition-all ${
-                    isActive ? "text-sage" : "text-slate-400 group-hover:text-sage"
-                  }`}
+                  className={`mt-6 flex items-center gap-2 text-sm font-bold transition-all ${isActive ? "text-sage" : "text-slate-400 group-hover:text-sage"
+                    }`}
                 >
                   <span>
                     {isActive ? "Tutup Detail Kasus" : "Lihat Analisis Kasus"}
                   </span>
                   <ChevronRight
-                    className={`w-4 h-4 transition-transform duration-300 ${
-                      isActive ? "rotate-90" : "group-hover:translate-x-1"
-                    }`}
+                    className={`w-4 h-4 transition-transform duration-300 ${isActive ? "rotate-90" : "group-hover:translate-x-1"
+                      }`}
                   />
                 </div>
               </div>
@@ -134,7 +128,7 @@ export default function Kacamata() {
         </div>
 
         {/* Section Kasus Interaktif - Light Mode Clean */}
-        <div className="relative">
+        <div id="uji-analisis" className="relative mt-32">
           <div className="absolute inset-0 bg-sage/5 rounded-[40px] blur-3xl -z-10" />
           <div className="text-center mb-10">
             <h3 className="font-poppins font-bold text-3xl text-navy mb-3">

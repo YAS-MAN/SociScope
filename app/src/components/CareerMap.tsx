@@ -32,7 +32,7 @@ const careerPaths = [
     id: "corporate",
     title: "Jalur Korporasi (HR/CSR)",
     icon: Briefcase,
-    color: "from-amber to-amber-light", // <-- Diperbaiki ke amber
+    color: "from-amber to-amber-light",
     textColor: "text-amber",
     stages: [
       "Officer/Staff",
@@ -46,7 +46,7 @@ const careerPaths = [
     id: "development",
     title: "Jalur NGO / Development",
     icon: TrendingUp,
-    color: "from-sage to-sage-light", // <-- Diperbaiki ke sage
+    color: "from-sage to-sage-light",
     textColor: "text-sage",
     stages: [
       "Project Officer",
@@ -71,6 +71,7 @@ const careerPaths = [
     ],
   },
 ];
+
 export default function CareerMap({ selectedCareerId }: CareerMapProps) {
   const [activeStage, setActiveStage] = useState<string>("year1_2");
   const [activePath, setActivePath] = useState<string | null>(null);
@@ -131,7 +132,7 @@ export default function CareerMap({ selectedCareerId }: CareerMapProps) {
 
         {/* Timeline Interaktif */}
         <div className="relative mb-10">
-          {/* Garis Timeline - Diperbaiki posisinya ke top-5 (mobile) & top-6 (desktop) */}
+          {/* Garis Timeline */}
           <div className="absolute top-5 md:top-6 left-0 right-0 h-1.5 bg-slate-200 rounded-full z-0" />
 
           <div className="relative flex justify-between z-10">
@@ -144,20 +145,18 @@ export default function CareerMap({ selectedCareerId }: CareerMapProps) {
                   className="relative flex flex-col items-center group w-1/4"
                 >
                   <div
-                    className={`w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center font-bold transition-all duration-300 z-10 ${
-                      isActive
-                        ? "bg-navy text-white scale-110 shadow-[0_0_15px_rgba(26,35,65,0.3)] rotate-3"
-                        : "bg-white border-2 border-slate-200 text-slate-400 group-hover:border-navy/50 group-hover:text-navy"
-                    }`}
+                    className={`w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center font-bold transition-all duration-300 z-10 ${isActive
+                      ? "bg-navy text-white scale-110 shadow-[0_0_15px_rgba(26,35,65,0.3)] rotate-3"
+                      : "bg-white border-2 border-slate-200 text-slate-400 group-hover:border-navy/50 group-hover:text-navy"
+                      }`}
                   >
                     {index + 1}
                   </div>
                   <span
-                    className={`mt-4 text-[10px] md:text-sm font-semibold text-center transition-colors bg-white px-2 ${
-                      isActive
-                        ? "text-navy"
-                        : "text-slate-400 group-hover:text-navy"
-                    }`}
+                    className={`mt-4 text-[10px] md:text-sm font-semibold text-center transition-colors bg-white px-2 ${isActive
+                      ? "text-navy"
+                      : "text-slate-400 group-hover:text-navy"
+                      }`}
                   >
                     {stage.title.split(":")[0]}
                   </span>
@@ -229,79 +228,88 @@ export default function CareerMap({ selectedCareerId }: CareerMapProps) {
           Proyeksi Jalur Karir Lanjutan
         </h3>
 
-        {/* DITAMBAHKAN items-start AGAR KOTAK TIDAK STRETCH / NGAMBANG */}
+        {/* Kotak dibikin items-start agar tidak ngambang */}
         <div className="grid md:grid-cols-2 gap-5 items-start">
           {careerPaths.map((path) => {
             const isActive = activePath === path.id;
             return (
               <div
                 key={path.id}
-                className={`w-full rounded-2xl border-2 transition-all duration-300 overflow-hidden bg-white ${
-                  isActive
-                    ? "border-navy shadow-lg shadow-navy/5"
-                    : "border-slate-100 hover:border-navy/40 hover:shadow-md"
-                }`}
+                className={`w-full rounded-2xl border-2 transition-all duration-300 overflow-hidden bg-white ${isActive
+                  ? "border-navy shadow-lg shadow-navy/5"
+                  : "border-slate-100 hover:border-navy/40 hover:shadow-md"
+                  }`}
               >
                 {/* AREA KLIK DIPERBESAR FULL 1 KOTAK HEADER */}
                 <button
                   onClick={() => setActivePath(isActive ? null : path.id)}
-                  className="w-full p-5 flex items-center gap-4 text-left focus:outline-none cursor-pointer"
+                  className="w-full p-6 flex items-center gap-5 text-left focus:outline-none cursor-pointer"
                 >
                   <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${path.color} flex items-center justify-center shrink-0 shadow-inner`}
+                    className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${path.color} flex items-center justify-center shrink-0 shadow-inner`}
                   >
-                    <path.icon className="w-6 h-6 text-white" />
+                    <path.icon className="w-7 h-7 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-poppins font-bold text-navy text-lg">
+                    <h4 className="font-poppins font-bold text-navy text-xl">
                       {path.title}
                     </h4>
                     <p
-                      className={`text-xs mt-1 font-medium transition-colors ${isActive ? path.textColor : "text-slate-400"}`}
+                      className={`text-sm mt-1 transition-colors ${isActive ? "text-slate-500 font-bold" : "text-slate-400 font-medium"}`}
                     >
                       {isActive ? "Tutup Detail" : "Klik untuk melihat tahapan"}
                     </p>
                   </div>
                 </button>
 
-                {/* ANIMASI DROPDOWN */}
+                {/* ANIMASI DROPDOWN DENGAN OVERFLOW HIDDEN YANG BENAR */}
                 <div
-                  className={`grid transition-all duration-500 ease-in-out px-6 ${
-                    isActive
-                      ? "grid-rows-[1fr] opacity-100 pb-6 border-t border-slate-100 pt-6"
-                      : "grid-rows-[0fr] opacity-0 pb-0 border-t-0 border-transparent pt-0"
-                  }`}
+                  className={`grid transition-all duration-500 ease-in-out px-6 ${isActive
+                    ? "grid-rows-[1fr] opacity-100 pb-6 border-t border-slate-100 pt-6"
+                    : "grid-rows-[0fr] opacity-0 pb-0 border-t-0 border-transparent pt-0"
+                    }`}
                 >
+                  {/* PENAMBAHAN OVERFLOW-HIDDEN DI SINI AGAR PADDING TERTUTUP SEMPURNA */}
                   <div className="overflow-hidden">
-                    {/* DESAIN BARU: TIMELINE VERTIKAL */}
-                    <div className="relative space-y-0">
-                      {/* Garis vertikal - DIPERBAIKI: left 13px pas di tengah lingkaran ukuran w-7 (28px) */}
-                      <div className="absolute left-[13px] top-4 bottom-4 w-0.5 bg-slate-200 z-0"></div>
+                    <div className="pb-16 pt-16">
+                      {/* DESAIN BARU: TIMELINE HORIZONTAL SELANG-SELING FULL WIDTH */}
+                      <div className="relative w-full flex items-center justify-between px-6 sm:px-12">
+                        {/* Garis horizontal */}
+                        <div className="absolute left-6 sm:left-12 right-6 sm:right-12 top-1/2 -translate-y-1/2 h-0.5 bg-slate-200 z-0"></div>
 
-                      {path.stages.map((stage, i) => {
-                        const isLast = i === path.stages.length - 1;
-                        return (
-                          <div
-                            key={i}
-                            className="flex items-center gap-4 relative z-10 py-3"
-                          >
+                        {path.stages.map((stage, i) => {
+                          const isLast = i === path.stages.length - 1;
+                          const isTop = i % 2 === 0;
+
+                          return (
                             <div
-                              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-4 border-white ${
-                                isLast
-                                  ? "bg-amber text-navy"
-                                  : "bg-slate-200 text-slate-500"
-                              }`}
+                              key={i}
+                              className="relative flex flex-col items-center group w-20 shrink-0"
                             >
-                              {i + 1}
+                              {/* Label Text (Selang-seling) */}
+                              <div className={`absolute whitespace-nowrap font-medium text-[10px] sm:text-xs transition-colors ${isLast ? "text-navy font-bold" : "text-slate-600"
+                                } ${isTop ? '-top-12' : 'top-8'}`}>
+                                <span className="bg-white px-2 py-0.5 rounded-lg inline-block text-center border-slate-100 border shadow-sm">
+                                  {stage} {isLast && "🎯"}
+                                </span>
+                              </div>
+
+                              {/* Garis Penghubung Dot ke Garis Tengah */}
+                              <div className={`absolute w-px bg-slate-200 z-0 ${isTop ? '-top-6 h-6' : 'top-3 h-6'}`}></div>
+
+                              {/* Dot Tengah */}
+                              <div
+                                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 border-4 border-white transition-transform duration-300 relative z-10 ${isLast
+                                  ? "bg-amber text-navy scale-125 shadow-md shadow-amber/20"
+                                  : "bg-slate-200 text-slate-500 group-hover:bg-navy group-hover:text-white"
+                                  }`}
+                              >
+                                {i + 1}
+                              </div>
                             </div>
-                            <span
-                              className={`text-sm ${isLast ? "text-navy font-bold" : "text-slate-600 font-medium"}`}
-                            >
-                              {stage} {isLast && "🎯"}
-                            </span>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -311,8 +319,8 @@ export default function CareerMap({ selectedCareerId }: CareerMapProps) {
         </div>
       </div>
 
-      {/* 3. Tips Sukses (Sama seperti sebelumnya) */}
-      <div className="bg-navy rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+      {/* 3. Tips Sukses */}
+      <div id="tips" className="bg-navy rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
         <h3 className="text-xl font-poppins font-bold mb-8 relative z-10">
           Tips Cepat Adaptasi Karir

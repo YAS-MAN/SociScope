@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* HERO SECTION - Background Biru/Navy */}
-      <section className="min-h-screen bg-gradient-to-br from-navy via-navy-light to-navy-dark relative overflow-hidden flex flex-col justify-center">
+      <section className="min-h-[100svh] pt-32 pb-20 bg-gradient-to-br from-navy via-navy-light to-navy-dark relative overflow-hidden flex flex-col justify-center h-auto">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-20 left-10 w-72 h-72 bg-sage rounded-full blur-3xl" />
@@ -16,10 +16,10 @@ export default function Home() {
 
         {/* Hero Content */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
+          <div className="grid lg:grid-cols-2 gap-12 items-center w-full mt-4 lg:mt-0">
             
             {/* Teks Sebelah Kiri */}
-            <div className="text-white mt-20 lg:mt-0">
+            <div className="text-white">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm mb-6 border border-white/10">
                 <span className="w-2 h-2 bg-amber rounded-full animate-pulse" />
                 Platform Edukasi Sosiologi Indonesia

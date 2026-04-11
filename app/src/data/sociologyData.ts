@@ -2,6 +2,20 @@
 // DATA SOSIOLOGI UNTUK SOCISCOPE
 // ============================================
 
+export const alumniData = [
+  { id: 1, name: "Dr. Anisa Rahmawati", role: "Sosiolog & Peneliti Senior", agency: "BRIN", imgColor: "bg-sage" },
+  { id: 2, name: "Bima Arya", role: "Analis Kebijakan Publik", agency: "Kementerian Bappenas", imgColor: "bg-navy" },
+  { id: 3, name: "Cahaya Putri", role: "UX Researcher", agency: "Gojek", imgColor: "bg-amber" },
+  { id: 4, name: "Deni Sudana", role: "Community Development", agency: "NGO Lingkungan", imgColor: "bg-green-500" },
+];
+
+export const hmpData = [
+  "HMP Sosiologi UNESA",
+  "HMI Sosiologi UI",
+  "Keluarga Mahasiswa Sosiologi UGM",
+  "HMD Sosiologi UNPAD",
+];
+
 // Tipe data untuk Teori Sosiologi
 export interface Theory {
   id: string;

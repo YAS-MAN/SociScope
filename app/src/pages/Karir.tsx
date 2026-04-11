@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { 
-  Briefcase, 
-  CheckCircle, 
-  Microscope, 
-  Landmark, 
-  Users, 
-  RefreshCw, 
-  Megaphone, 
-  Smartphone, 
-  BarChart3, 
+import {
+  Briefcase,
+  CheckCircle,
+  Microscope,
+  Landmark,
+  Users,
+  RefreshCw,
+  Megaphone,
+  Smartphone,
+  BarChart3,
   MessageCircle,
   ChevronRight,
   Target,
@@ -57,7 +57,7 @@ export default function Karir() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-navy/10 rounded-full blur-[100px]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
         {/* HEADER */}
         <div className="text-center mb-16 animate-fadeIn">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-navy/10 border border-navy/20 rounded-full text-sm text-navy font-bold mb-4">
@@ -73,11 +73,11 @@ export default function Karir() {
         </div>
 
         {/* CAREER CARDS GRID */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+        <div id="profesi" className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
           {careers.map((career, index) => {
-            const IconComponent = { 
-              Microscope, Landmark, Users, RefreshCw, 
-              Megaphone, Smartphone, BarChart3, MessageCircle 
+            const IconComponent = {
+              Microscope, Landmark, Users, RefreshCw,
+              Megaphone, Smartphone, BarChart3, MessageCircle
             }[career.icon] || Briefcase;
 
             const isActive = selectedCareer === career.id;
@@ -85,22 +85,20 @@ export default function Karir() {
             return (
               <div
                 key={career.id}
-                className={`group p-6 rounded-3xl border transition-all duration-500 cursor-pointer animate-fadeIn bg-white ${
-                  isActive
+                className={`group p-6 rounded-3xl border transition-all duration-500 cursor-pointer animate-fadeIn bg-white ${isActive
                     ? 'border-navy shadow-xl ring-4 ring-navy/10'
                     : 'border-slate-200 hover:border-navy/50 hover:shadow-lg shadow-sm'
-                }`}
+                  }`}
                 style={{ animationDelay: `${index * 50}ms` }}
                 onClick={() => setSelectedCareer(isActive ? null : career.id)}
               >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all duration-500 ${
-                  isActive 
-                    ? 'bg-navy text-white rotate-12 scale-110 shadow-lg shadow-navy/30' 
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all duration-500 ${isActive
+                    ? 'bg-navy text-white rotate-12 scale-110 shadow-lg shadow-navy/30'
                     : 'bg-navy/10 text-navy group-hover:scale-110 group-hover:bg-navy/20'
-                }`}>
+                  }`}>
                   <IconComponent className="w-7 h-7" />
                 </div>
-                
+
                 <h3 className="font-poppins font-bold text-xl text-navy mb-2 group-hover:text-navy-light transition-colors">
                   {career.title}
                 </h3>
@@ -112,11 +110,10 @@ export default function Karir() {
                 </p>
 
                 <div
-                  className={`grid transition-all duration-500 ease-in-out ${
-                    isActive
+                  className={`grid transition-all duration-500 ease-in-out ${isActive
                       ? "grid-rows-[1fr] opacity-100 mt-6 pt-6 border-t border-slate-100"
                       : "grid-rows-[0fr] opacity-0 mt-0 pt-0 border-t-0 border-transparent"
-                  }`}
+                    }`}
                 >
                   <div className="overflow-hidden space-y-5">
                     <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
@@ -129,7 +126,7 @@ export default function Karir() {
                         ))}
                       </div>
                     </div>
-                    
+
                     <div>
                       <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[2px]">Persyaratan</span>
                       <ul className="mt-2 space-y-2">
@@ -143,12 +140,11 @@ export default function Karir() {
                     </div>
                   </div>
                 </div>
-                
-                <div className={`mt-6 flex items-center gap-2 text-xs font-bold transition-all ${
-                  isActive ? 'text-navy' : 'text-slate-400 group-hover:text-navy'
-                }`}>
-                   <span>{isActive ? 'Tutup Detail' : 'Lihat Detail'}</span>
-                   <ChevronRight className={`w-3 h-3 transition-transform duration-300 ${isActive ? 'rotate-90' : 'group-hover:translate-x-1'}`} />
+
+                <div className={`mt-6 flex items-center gap-2 text-xs font-bold transition-all ${isActive ? 'text-navy' : 'text-slate-400 group-hover:text-navy'
+                  }`}>
+                  <span>{isActive ? 'Tutup Detail' : 'Lihat Detail'}</span>
+                  <ChevronRight className={`w-3 h-3 transition-transform duration-300 ${isActive ? 'rotate-90' : 'group-hover:translate-x-1'}`} />
                 </div>
               </div>
             );
@@ -156,7 +152,7 @@ export default function Karir() {
         </div>
 
         {/* SECTION CAREER MAP */}
-        <div className="relative group mb-24">
+        <div id="peta" className="relative group mb-24">
           <div className="absolute inset-0 bg-navy/5 rounded-[40px] blur-3xl -z-10 transition-colors" />
           <div className="bg-white rounded-[40px] p-2 sm:p-8 border border-slate-200 shadow-xl">
             <CareerMap selectedCareerId={selectedCareer} />
@@ -164,7 +160,7 @@ export default function Karir() {
         </div>
 
         {/* SECTION BARU: ARTIKEL CAPAIAN PRESTASI */}
-        <div className="mb-24">
+        <div id="capaian" className="mb-24">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-sage/10 rounded-full text-xs text-sage-dark font-bold mb-3 border border-sage/20">
@@ -190,16 +186,16 @@ export default function Karir() {
                 {/* Gambar Thumbnail */}
                 <div className="relative h-48 overflow-hidden bg-slate-100">
                   <div className="absolute inset-0 bg-navy/20 group-hover:bg-transparent transition-colors z-10" />
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
+                  <img
+                    src={item.image}
+                    alt={item.title}
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-navy">
                     {item.category}
                   </div>
                 </div>
-                
+
                 {/* Konten Artikel */}
                 <div className="p-6">
                   <div className="flex items-center gap-2 text-xs text-slate-500 mb-3 font-medium">

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, ChevronRight, RotateCcw, Lightbulb, CheckCircle } from 'lucide-react';
+import { Eye, ChevronRight, RotateCcw, Lightbulb, CheckCircle, MessageSquare, Send, User } from 'lucide-react';
 import { interactiveCases, type InteractiveCase as InteractiveCaseType } from '@/data/sociologyData';
 
 interface SelectedAnswer {
@@ -11,6 +11,25 @@ export default function InteractiveCase() {
   const [selectedCase, setSelectedCase] = useState<InteractiveCaseType | null>(null);
   const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswer[]>([]);
   const [showAnalysis, setShowAnalysis] = useState(false);
+
+  // State untuk Mimbar Bebas (Tanggapan User)
+  const [comments, setComments] = useState<{id: number, name: string, text: string, time: string}[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [userName, setUserName] = useState("");
+
+  const handlePostComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+    
+    setComments([{ 
+      id: Date.now(), 
+      name: userName.trim() || 'Anonim', 
+      text: newComment.trim(),
+      time: "Baru saja" 
+    }, ...comments]);
+    
+    setNewComment("");
+  };
 
   const handleCaseSelect = (caseItem: InteractiveCaseType) => {
     setSelectedCase(caseItem);
@@ -33,6 +52,7 @@ export default function InteractiveCase() {
     setSelectedCase(null);
     setSelectedAnswers([]);
     setShowAnalysis(false);
+    setComments([]); // bersihkan juga komentar dari state saat reset
   };
 
   const allQuestionsAnswered = selectedCase?.questions.every(q => 
@@ -214,6 +234,81 @@ export default function InteractiveCase() {
                   jawaban yang berbeda!
                 </p>
               </div>
+            </div>
+          )}
+
+          {/* MIMBAR BEBAS (Muncul di bawah hasil analisis) */}
+          {showAnalysis && (
+            <div id="mimbar" className="mt-8 bg-black/20 rounded-3xl p-6 md:p-8 border border-white/10 shadow-xl animate-fadeIn">
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <h4 className="font-poppins font-bold text-white mb-1 flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-sage-light" />
+                    Mimbar Bebas Sosiologi
+                  </h4>
+                  <p className="text-slate-400 text-sm">
+                    Bagaimana menurutmu? Tambahkan perspektif sosiologismu sendiri terkait kasus {selectedCase.title}.
+                  </p>
+                </div>
+              </div>
+
+              {/* Form Input Opini */}
+              <form onSubmit={handlePostComment} className="mb-8 relative">
+                <div className="flex gap-4">
+                  <div className="flex-1 space-y-3">
+                     <input 
+                       type="text" 
+                       placeholder="Nama kamu (opsional)" 
+                       value={userName}
+                       onChange={(e) => setUserName(e.target.value)}
+                       className="w-full px-4 py-2.5 rounded-xl border border-white/20 bg-white/5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sage/50 text-sm"
+                     />
+                     <div className="relative">
+                       <textarea
+                         placeholder="Menurut saya, dari kacamata struktural..."
+                         value={newComment}
+                         onChange={(e) => setNewComment(e.target.value)}
+                         rows={3}
+                         className="w-full px-4 py-3 pr-14 rounded-xl border border-white/20 bg-white/5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sage/50 text-sm resize-none"
+                       ></textarea>
+                       <button 
+                         type="submit"
+                         className="absolute bottom-3 right-3 w-10 h-10 bg-sage hover:bg-sage-light text-navy rounded-lg flex items-center justify-center transition-colors disabled:opacity-50 disabled:bg-slate-500"
+                         disabled={!newComment.trim()}
+                       >
+                         <Send className="w-4 h-4" />
+                       </button>
+                     </div>
+                  </div>
+                </div>
+              </form>
+
+              {/* List Argumen */}
+              {comments.length > 0 && (
+                <div className="space-y-4 pt-6 border-t border-white/10">
+                  <h5 className="font-poppins font-bold text-white text-sm">
+                    Tanggapan Teman ({comments.length})
+                  </h5>
+                  <div className="grid gap-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    {comments.map((comment) => (
+                      <div key={comment.id} className="flex gap-3 bg-white/5 p-4 rounded-2xl border border-white/5">
+                        <div className="w-10 h-10 rounded-full bg-sage/10 text-sage-light shrink-0 flex items-center justify-center border border-sage/20">
+                          <User className="w-5 h-5" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-bold text-sm text-amber-light">{comment.name}</span>
+                            <span className="text-xs text-slate-400">{comment.time}</span>
+                          </div>
+                          <p className="text-sm text-slate-300 leading-relaxed">
+                            {comment.text}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

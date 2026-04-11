@@ -1,8 +1,10 @@
 import { Users, GraduationCap, Building, Search, Send, User } from "lucide-react";
 import { useState } from "react";
-import { alumniData, hmpData } from "@/data/sociologyData";
+import { useAdminStore } from "@/store/useAdminStore";
 
 export default function Jejaring() {
+  const alumniData = useAdminStore((state) => state.alumniData);
+  const hmpData = useAdminStore((state) => state.hmpData);
   const [activeChat, setActiveChat] = useState("HMP Sosiologi UNESA");
   const [messages, setMessages] = useState([
     { id: 1, sender: "Ketua HMP", text: "Halo teman-teman sosiologi se-Indonesia! Ada info webinar terbaru nih.", time: "10:00 AM", isMe: false },

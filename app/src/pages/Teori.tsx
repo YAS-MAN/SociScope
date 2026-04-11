@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
 import { BookOpen, ChevronRight } from 'lucide-react';
 import TheoryRecommender from '@/components/TheoryRecommender';
-import { theories } from '@/data/sociologyData';
+import { useAdminStore } from '@/store/useAdminStore';
 
 export default function Teori() {
+  const theories = useAdminStore((state) => state.theories);
   const [selectedTheory, setSelectedTheory] = useState<string | null>(null);
 
   // 1. MENGOLAH DATA TAHUN & MENGURUTKAN SECARA KRONOLOGIS
@@ -15,7 +16,7 @@ export default function Teori() {
         return { ...t, startYear };
       })
       .sort((a, b) => a.startYear - b.startYear); // Urutkan dari terlama ke terbaru
-  }, []);
+  }, [theories]);
 
   // 2. MENGHITUNG RENTANG WAKTU UNTUK POSISI PROPORSIONAL
   const minYear = theoriesWithYear[0].startYear;

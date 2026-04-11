@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Calendar, ArrowRight, ExternalLink, RefreshCw } from 'lucide-react';
+import { useAdminStore } from '@/store/useAdminStore';
 
 interface UnesaArticle {
     title: string;
@@ -11,6 +12,7 @@ interface UnesaArticle {
 }
 
 export default function BeritaUnesa() {
+    const hiddenRssLinks = useAdminStore((state) => state.hiddenRssLinks);
     const [articles, setArticles] = useState<UnesaArticle[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -120,9 +122,12 @@ export default function BeritaUnesa() {
         );
     }
 
+    // Filter out articles hidden by admin CMS
+    const visibleArticles = articles.filter(a => !hiddenRssLinks.includes(a.link));
+
     return (
         <div className="grid md:grid-cols-3 gap-8">
-            {articles.map((item, index) => (
+            {visibleArticles.map((item, index) => (
                 <a
                     key={index}
                     href={item.link}

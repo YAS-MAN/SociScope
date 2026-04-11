@@ -18,7 +18,7 @@ import {
 
   from 'lucide-react';
 import CareerMap from '@/components/CareerMap';
-import { careers } from '@/data/sociologyData';
+import { useAdminStore } from '@/store/useAdminStore';
 import BeritaUnesa from '@/components/beritaunesa';
 
 // --- DATA DUMMY UNTUK ARTIKEL PRESTASI ---
@@ -50,6 +50,7 @@ const achievements = [
 ];
 
 export default function Karir() {
+  const careers = useAdminStore((state) => state.careers);
   const [selectedCareer, setSelectedCareer] = useState<string | null>(null);
 
   return (

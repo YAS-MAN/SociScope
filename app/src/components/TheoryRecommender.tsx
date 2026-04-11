@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Search, RefreshCw, BookOpen, User, Target, Layers, BarChart3, Lightbulb } from 'lucide-react';
-import { theories, type Theory } from '@/data/sociologyData';
+import { type Theory } from '@/data/sociologyData';
+import { useAdminStore } from '@/store/useAdminStore';
 
 interface FormData {
   scale: string;
@@ -16,6 +17,7 @@ interface Recommendation {
 }
 
 export default function TheoryRecommender() {
+  const theories = useAdminStore((state) => state.theories);
   const [formData, setFormData] = useState<FormData>({
     scale: '',
     focus: '',

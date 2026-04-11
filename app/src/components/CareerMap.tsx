@@ -6,7 +6,7 @@ import {
   Award,
   CheckCircle2,
 } from "lucide-react";
-import { careers } from "@/data/sociologyData";
+import { useAdminStore } from "@/store/useAdminStore";
 
 // Menerima ID karir yang sedang diklik user di halaman utama
 interface CareerMapProps {
@@ -77,6 +77,7 @@ export default function CareerMap({ selectedCareerId }: CareerMapProps) {
   const [activePath, setActivePath] = useState<string | null>(null);
 
   // Jika tidak ada karir yang dipilih, gunakan default "Peneliti Sosial" sebagai contoh
+  const careers = useAdminStore((state) => state.careers);
   const activeCareerData =
     careers.find((c) => c.id === selectedCareerId) || careers[0];
 

@@ -47,7 +47,7 @@ function App() {
     <div className={`min-h-screen ${pageBgClass} font-inter selection:bg-sage/30`}>
       <Header />
 
-      <main className="relative z-10 pt-28 md:pt-28">
+      <main className="relative z-10">
         {/* TRIK NINJA: Key berubah = Elemen di-render ulang = Animasi jalan lagi */}
         {/* Animasi 'animate-pageTransition' sudah dipasang di sini, 
             sehingga otomatis berlaku untuk semua halaman, termasuk Privasi dan Syarat. */}
@@ -70,4 +70,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

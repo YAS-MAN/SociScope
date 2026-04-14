@@ -13,51 +13,20 @@ import {
   ChevronRight,
   Target,
   Trophy,
-  ExternalLink
+  ExternalLink,
+  Newspaper
 }
 
   from 'lucide-react';
 import CareerMap from '@/components/CareerMap';
 import { useAdminStore } from '@/store/useAdminStore';
-import BeritaUnesa from '@/components/beritaunesa';
-
-// --- DATA DUMMY UNTUK ARTIKEL PRESTASI ---
-const achievements = [
-  {
-    id: 1,
-    title: "Kembangkan Inovasi Pemetaan Sosial Desa, Tim Alumni Sosiologi UNESA Raih Penghargaan Nasional",
-    category: "Pemberdayaan Masyarakat",
-    date: "12 Maret 2026",
-    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800",
-    snippet: "Berbekal teori pemberdayaan dan metode riset aksi, kolaborasi apik antara sosiologi dan teknologi berhasil memetakan daerah rawan stunting dengan presisi tinggi..."
-  },
-  {
-    id: 2,
-    title: "Dari Kelas ke Kebijakan: Mahasiswa Loloskan Rekomendasi RUU Kesejahteraan Ibu dan Anak",
-    category: "Advokasi Kebijakan",
-    date: "28 Februari 2026",
-    image: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800",
-    snippet: "Menggunakan kacamata interseksionalitas, kajian mendalam mengenai beban ganda pekerja perempuan sukses menjadi naskah akademik yang diterima di DPR RI..."
-  },
-  {
-    id: 3,
-    title: "Tembus Jurnal Internasional Q1 Lewat Riset Fenomena Gentrifikasi Perkotaan",
-    category: "Publikasi Ilmiah",
-    date: "15 Januari 2026",
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800",
-    snippet: "Penelitian yang membedah pergeseran struktur kelas dan ruang di kota metropolitan menarik perhatian akademisi global dan membuka peluang beasiswa S2..."
-  }
-];
 
 export default function Karir() {
   const careers = useAdminStore((state) => state.careers);
   const [selectedCareer, setSelectedCareer] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-slate-50 relative overflow-hidden py-24">
-      {/* Efek Latar Belakang */}
-      <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-amber/20 rounded-full blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-navy/10 rounded-full blur-[100px]" />
+    <div className="min-h-screen bg-white relative overflow-hidden py-24">
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -78,9 +47,10 @@ export default function Karir() {
         {/* CAREER CARDS GRID */}
         <div id="profesi" className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
           {careers.map((career, index) => {
+            const isImageUrl = career.icon?.startsWith('http') || career.icon?.startsWith('/');
             const IconComponent = {
               Microscope, Landmark, Users, RefreshCw,
-              Megaphone, Smartphone, BarChart3, MessageCircle
+              Megaphone, Smartphone, BarChart3, MessageCircle, Briefcase
             }[career.icon] || Briefcase;
 
             const isActive = selectedCareer === career.id;
@@ -95,11 +65,15 @@ export default function Karir() {
                 style={{ animationDelay: `${index * 50}ms` }}
                 onClick={() => setSelectedCareer(isActive ? null : career.id)}
               >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all duration-500 ${isActive
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all duration-500 overflow-hidden ${isActive
                   ? 'bg-navy text-white rotate-12 scale-110 shadow-lg shadow-navy/30'
                   : 'bg-navy/10 text-navy group-hover:scale-110 group-hover:bg-navy/20'
                   }`}>
-                  <IconComponent className="w-7 h-7" />
+                  {isImageUrl ? (
+                    <img src={career.icon} alt={career.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <IconComponent className="w-7 h-7" />
+                  )}
                 </div>
 
                 <h3 className="font-poppins font-bold text-xl text-navy mb-2 group-hover:text-navy-light transition-colors">
@@ -160,32 +134,6 @@ export default function Karir() {
           <div className="bg-white rounded-[40px] p-2 sm:p-8 border border-slate-200 shadow-xl">
             <CareerMap selectedCareerId={selectedCareer} />
           </div>
-        </div>
-
-        {/* SECTION BARU: ARTIKEL CAPAIAN PRESTASI */}
-        <div id="capaian" className="mb-24">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-sage/10 rounded-full text-xs text-sage-dark font-bold mb-3 border border-sage/20">
-                <Trophy className="w-3.5 h-3.5" />
-                Kabar Sosiologi UNESA
-              </div>
-              <h3 className="text-3xl font-poppins font-bold text-navy">
-                Berita & Agenda Terbaru
-              </h3>
-              <p className="text-slate-600 mt-2 max-w-xl">
-                Ikuti perkembangan, berita terbaru, dan kegiatan dari program studi Sosiologi Universitas Negeri Surabaya.
-              </p>
-            </div>
-            <a href="https://sosiologi.fisipol.unesa.ac.id/" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-navy hover:text-sage transition-colors flex items-center gap-2 group w-max">
-              Kunjungi Web Resmi
-              <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </a>
-          </div>
-
-          {/* MEMANGGIL KOMPONEN BERITA UNESA DI SINI */}
-          <BeritaUnesa />
-
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useAdminStore } from '@/store/useAdminStore';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Users, BookOpen, Briefcase, Activity } from 'lucide-react';
+import DataMigrator from '@/components/DataMigrator';
 
 const visitData = [
   { name: 'Sen', visits: 400 },
@@ -32,6 +33,7 @@ export default function DashboardAdmin() {
   return (
     <div className="space-y-6">
       {/* Stat Cards */}
+      <DataMigrator />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
@@ -55,10 +57,10 @@ export default function DashboardAdmin() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={visitData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
                   <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                  <Line type="monotone" dataKey="visits" stroke="#10b981" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 8}} />
+                  <Line type="monotone" dataKey="visits" stroke="#10b981" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 8 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -70,9 +72,9 @@ export default function DashboardAdmin() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={topicData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                  <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                   <Bar dataKey="score" fill="#f59e0b" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -86,13 +88,13 @@ export default function DashboardAdmin() {
             <h3 className="font-bold text-navy">Audit Logs</h3>
             <span className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded-full font-medium">Live</span>
           </div>
-          
-          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4 max-h-[600px]">
+
+          <div className="flex-1 overflow-y-auto pl-4 pr-2 custom-scrollbar space-y-4 max-h-[600px]">
             {auditLogs.map((log) => (
               <div key={log.id} className="relative pl-6 pb-4 border-l-2 border-slate-100 last:border-transparent last:pb-0">
                 <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-amber" />
                 <div className="text-xs font-bold text-slate-400 mb-1">
-                  {log.timestamp.toLocaleTimeString('id-ID', { hour: '2-digit', minute:'2-digit' })}
+                  {log.timestamp.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                 </div>
                 <div className="text-sm font-medium text-navy bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-sm">
                   {log.action}

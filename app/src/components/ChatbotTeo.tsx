@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
-import { teoResponses, defaultTeoResponse } from '@/data/sociologyData';
+import { MessageCircle, X, Send, Bot, User, Sparkles } from 'lucide-react';
+import { defaultTeoResponse } from '@/data/sociologyData';
+import { useAdminStore } from '@/store/useAdminStore';
 
 interface Message {
   id: string;
@@ -10,11 +11,12 @@ interface Message {
 }
 
 export default function ChatbotTeo() {
+  const teoResponses = useAdminStore((state) => state.teoResponses);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
-      text: 'Halo! Saya SociS, Sociology Assistance virtualmu. Ada yang bisa saya bantu? Tanyakan tentang teori, karir, atau konsep sosiologi!',
+      text: 'Halo! Saya SociZ, asisten virtual SociZone. Tanyakan apa saja tentang teori sosiologi, konsep kacamata, atau prospek karir!',
       sender: 'bot',
       timestamp: new Date()
     }
@@ -24,19 +26,16 @@ export default function ChatbotTeo() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll ke pesan terbaru
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Focus input saat chat dibuka
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [isOpen]);
 
-  // Fungsi untuk mencari response yang sesuai
   const findResponse = (userMessage: string): string => {
     const lowerMessage = userMessage.toLowerCase();
     
@@ -63,7 +62,6 @@ export default function ChatbotTeo() {
     setInputValue('');
     setIsTyping(true);
 
-    // Simulasi delay response
     setTimeout(() => {
       const botResponse: Message = {
         id: (Date.now() + 1).toString(),
@@ -95,13 +93,17 @@ export default function ChatbotTeo() {
       {/* Floating Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-navy text-white shadow-lg shadow-navy/30 hover:scale-110 transition-all duration-300 flex items-center justify-center group ${
+        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-navy to-sage text-white shadow-lg shadow-navy/30 hover:scale-110 transition-all duration-300 flex items-center justify-center group ${
           isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'
         }`}
-        aria-label="Buka chat dengan Socis"
+        aria-label="Buka chat dengan SociZ"
       >
-        <MessageCircle className="w-6 h-6" />
-        <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
+        <Sparkles className="w-6 h-6" />
+        <span className="absolute top-0 right-0 w-3 h-3 bg-amber rounded-full border-2 border-white animate-pulse" />
+        {/* Tooltip */}
+        <span className="absolute right-full mr-3 whitespace-nowrap bg-navy text-white text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-lg pointer-events-none">
+          Tanya SociZ ✨
+        </span>
       </button>
 
       {/* Chat Modal */}
@@ -111,17 +113,17 @@ export default function ChatbotTeo() {
             ? 'scale-100 opacity-100 translate-y-0'
             : 'scale-95 opacity-0 translate-y-10 pointer-events-none'
         }`}
-        style={{ height: isOpen ? '550px' : '0' }}
+        style={{ height: isOpen ? '530px' : '0' }}
       >
         {/* Header */}
-        <div className="bg-navy p-4 flex items-center justify-between relative shrink-0">
+        <div className="bg-gradient-to-r from-navy to-sage p-4 flex items-center justify-between relative shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
-              <Bot className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 bg-white/15 rounded-full flex items-center justify-center ring-2 ring-white/20">
+              <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="font-poppins font-bold text-white text-sm">SociS</h3>
-              <p className="text-xs text-slate-300">Asisten Sosiologi Virtual</p>
+              <h3 className="font-poppins font-bold text-white text-sm">SociZ</h3>
+              <p className="text-xs text-white/70">Asisten Sosiologi Virtual · SociZone</p>
             </div>
           </div>
           
@@ -143,11 +145,11 @@ export default function ChatbotTeo() {
             >
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 shadow-sm ${
-                  message.sender === 'bot' ? 'bg-navy' : 'bg-amber'
+                  message.sender === 'bot' ? 'bg-gradient-to-br from-navy to-sage' : 'bg-amber'
                 }`}
               >
                 {message.sender === 'bot' ? (
-                  <Bot className="w-4 h-4 text-white" />
+                  <Sparkles className="w-4 h-4 text-white" />
                 ) : (
                   <User className="w-4 h-4 text-navy-dark font-bold" />
                 )}
@@ -166,13 +168,13 @@ export default function ChatbotTeo() {
           
           {isTyping && (
             <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-navy flex items-center justify-center flex-shrink-0 mt-1">
-                <Bot className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-navy to-sage flex items-center justify-center flex-shrink-0 mt-1">
+                <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div className="bg-white p-4 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 flex items-center gap-1.5 h-[44px]">
-                <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                <span className="w-2 h-2 bg-sage rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-2 h-2 bg-sage rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-2 h-2 bg-sage rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
             </div>
           )}
@@ -181,7 +183,6 @@ export default function ChatbotTeo() {
 
         {/* Quick Questions & Input Area */}
         <div className="shrink-0 bg-white border-t border-slate-100 flex flex-col">
-          {/* Quick Questions - Selalu muncul, bisa digeser ke samping */}
           <div className="w-full bg-slate-50/50 pt-3 pb-1 px-3 border-b border-slate-100">
             <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               {quickQuestions.map((q) => (
@@ -191,7 +192,7 @@ export default function ChatbotTeo() {
                     setInputValue(q);
                     inputRef.current?.focus();
                   }}
-                  className="text-[11px] whitespace-nowrap px-3 py-1.5 bg-white border border-slate-200 rounded-full text-slate-600 hover:border-navy hover:text-navy hover:bg-slate-50 transition-all font-medium shadow-sm shrink-0"
+                  className="text-[11px] whitespace-nowrap px-3 py-1.5 bg-white border border-slate-200 rounded-full text-slate-600 hover:border-sage hover:text-sage hover:bg-sage/5 transition-all font-medium shadow-sm shrink-0"
                 >
                   {q}
                 </button>
@@ -207,13 +208,13 @@ export default function ChatbotTeo() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ketik pertanyaanmu..."
-                className="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy bg-slate-50 transition-all"
+                placeholder="Tanya SociZ..."
+                className="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sage/30 focus:border-sage bg-slate-50 transition-all"
               />
               <button
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim()}
-                className="w-11 h-11 shrink-0 rounded-xl bg-navy text-white flex items-center justify-center disabled:opacity-50 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-navy-dark hover:shadow-md transition-all"
+                className="w-11 h-11 shrink-0 rounded-xl bg-gradient-to-br from-navy to-sage text-white flex items-center justify-center disabled:opacity-50 disabled:from-slate-300 disabled:to-slate-300 disabled:cursor-not-allowed hover:shadow-md transition-all"
                 aria-label="Kirim pesan"
               >
                 <Send className="w-4 h-4 translate-x-0.5" />

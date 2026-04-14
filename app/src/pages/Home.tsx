@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Glasses, BookOpen, Briefcase, ChevronRight, Eye, Users, Target, ArrowDown } from "lucide-react";
+import { Glasses, BookOpen, Briefcase, ChevronRight, Eye, Users, ArrowDown, ExternalLink, Newspaper } from "lucide-react";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* HERO SECTION - Background Biru/Navy */}
-      <section className="min-h-[100svh] pt-32 pb-20 bg-gradient-to-br from-navy via-navy-light to-navy-dark relative overflow-hidden flex flex-col justify-center h-auto">
+      <section className="min-h-[100svh] pt-32 pb-20 bg-gradient-to-br from-navy via-navy-light to-navy-light relative overflow-hidden flex flex-col justify-center h-auto">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-20 left-10 w-72 h-72 bg-sage rounded-full blur-3xl" />
@@ -17,7 +17,7 @@ export default function Home() {
         {/* Hero Content */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="grid lg:grid-cols-2 gap-12 items-center w-full mt-4 lg:mt-0">
-            
+
             {/* Teks Sebelah Kiri */}
             <div className="text-white">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm mb-6 border border-white/10">
@@ -34,8 +34,8 @@ export default function Home() {
                 Pelajari cara memahami masyarakat, menganalisis fenomena sosial,
                 dan membuka peluang karir dengan perspektif sosiologi.
               </p>
-              
-              <div className="flex flex-wrap gap-4">
+
+              <div className="flex flex-wrap gap-4 mb-12">
                 <button
                   onClick={() => navigate("/kacamata")}
                   className="px-6 py-3 bg-amber hover:bg-amber-light text-navy font-bold rounded-xl transition-all hover:shadow-[0_0_20px_rgba(232,167,53,0.4)] flex items-center gap-2"
@@ -52,35 +52,39 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* Stats */}
-              <div className="mt-12 grid grid-cols-3 gap-6 border-t border-white/10 pt-8">
-                <div>
-                  <div className="text-3xl font-bold text-amber">10+</div>
-                  <div className="text-sm text-white/60">Teori Sosiologi</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-amber">8</div>
-                  <div className="text-sm text-white/60">Profesi Karir</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-amber">4</div>
-                  <div className="text-sm text-white/60">Kacamata Sosiologi</div>
-                </div>
+              {/* CTA Artikel - menggantikan stats lama */}
+              <div className="border-t border-white/10 pt-8">
+                <p className="text-white/50 text-xs uppercase tracking-widest font-bold mb-4">Ikuti Perkembangan Terbaru</p>
+                <a
+                  href="/jejaring#artikel"
+                  onClick={(e) => { e.preventDefault(); navigate("/jejaring"); setTimeout(() => { document.getElementById("artikel")?.scrollIntoView({ behavior: "smooth" }); }, 150); }}
+                  className="inline-flex items-center gap-3 group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center group-hover:bg-amber/20 transition-colors border border-white/10">
+                    <Newspaper className="w-5 h-5 text-amber" />
+                  </div>
+                  <div>
+                    <div className="text-white font-bold text-sm group-hover:text-amber-light transition-colors flex items-center gap-2">
+                      Baca Artikel & Berita Sosiologi
+                      <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </div>
+                    <div className="text-white/40 text-xs">Live update dari UNESA Sosiologi</div>
+                  </div>
+                </a>
               </div>
             </div>
 
-            {/* Hero Illustration - Animasi Bergerak di Sini */}
+            {/* Hero Illustration */}
             <div className="hidden lg:flex justify-center">
               <div className="relative">
                 <div className="w-80 h-80 bg-gradient-to-br from-sage/30 to-amber/30 rounded-full flex items-center justify-center">
                   <div className="w-64 h-64 bg-gradient-to-br from-sage/50 to-amber/50 rounded-full flex items-center justify-center">
-                    {/* Lingkaran inti kacamata diberi animasi melayang (animate-float) */}
                     <div className="w-48 h-48 bg-gradient-to-br from-sage to-amber rounded-full flex items-center justify-center shadow-2xl animate-float relative z-10">
                       <Glasses className="w-24 h-24 text-white" />
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Floating Elements */}
                 <div className="absolute -top-4 -left-4 w-16 h-16 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center animate-float" style={{ animationDelay: "0.5s" }}>
                   <BookOpen className="w-8 h-8 text-amber" />
@@ -89,7 +93,7 @@ export default function Home() {
                   <Users className="w-8 h-8 text-sage" />
                 </div>
                 <div className="absolute top-1/2 -right-8 w-12 h-12 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center animate-float" style={{ animationDelay: "1.5s" }}>
-                  <Target className="w-6 h-6 text-amber" />
+                  <Briefcase className="w-6 h-6 text-amber" />
                 </div>
               </div>
             </div>
@@ -102,12 +106,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TIGA PILAR SECTION - Background Putih */}
+      {/* TIGA PILAR SECTION */}
       <section className="py-24 bg-white relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Subtle divider effect */}
+        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-navy-light/5 to-transparent pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber/10 border border-amber/20 rounded-full text-sm text-amber-dark font-medium mb-4">
+              <span className="w-2 h-2 bg-amber rounded-full" />
+              Fitur Utama
+            </div>
             <h2 className="font-poppins font-bold text-3xl md:text-4xl text-navy mb-4">
-              Tiga Pilar SociScope
+              Tiga Pilar SociZone
             </h2>
             <p className="text-slate-600 max-w-2xl mx-auto text-lg">
               Bangun pemahaman sosiologi yang komprehensif melalui tiga pilar utama yang saling terhubung.
@@ -116,8 +127,8 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Pilar 1: Kacamata */}
-            <div className="group p-8 rounded-3xl bg-gradient-to-br from-slate-50 to-white border border-slate-100 hover:border-sage/50 hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-gradient-to-br from-sage to-sage-light rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-md">
+            <div className="group p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:border-sage/50 hover:bg-white hover:shadow-xl hover:shadow-sage/10 transition-all duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-sage to-sage-light rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-md shadow-sage/30">
                 <Eye className="w-8 h-8 text-white" />
               </div>
               <h3 className="font-poppins font-bold text-2xl text-navy mb-3 group-hover:text-sage transition-colors">
@@ -136,19 +147,19 @@ export default function Home() {
             </div>
 
             {/* Pilar 2: Teori */}
-            <div className="group p-8 rounded-3xl bg-gradient-to-br from-slate-50 to-white border border-slate-100 hover:border-amber/50 hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber to-amber-light rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-md">
+            <div className="group p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:border-amber/50 hover:bg-white hover:shadow-xl hover:shadow-amber/10 transition-all duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-amber to-amber-light rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-md shadow-amber/30">
                 <BookOpen className="w-8 h-8 text-white" />
               </div>
-              <h3 className="font-poppins font-bold text-2xl text-navy mb-3 group-hover:text-amber transition-colors">
+              <h3 className="font-poppins font-bold text-2xl text-navy mb-3 group-hover:text-amber-dark transition-colors">
                 Teori Sosiologi
               </h3>
               <p className="text-slate-600 mb-8 leading-relaxed">
-                Kuasai 10 teori klasik dan kontemporer dari Durkheim, Marx, Weber, hingga Wallerstein dengan kasus Indonesia.
+                Kuasai teori klasik dan kontemporer dari Durkheim, Marx, Weber, hingga Wallerstein dengan kasus Indonesia.
               </p>
               <button
                 onClick={() => navigate("/teori")}
-                className="text-amber font-bold flex items-center gap-2 group-hover:gap-3 transition-all"
+                className="text-amber-dark font-bold flex items-center gap-2 group-hover:gap-3 transition-all"
               >
                 Jelajahi Teori
                 <ChevronRight className="w-5 h-5" />
@@ -156,19 +167,19 @@ export default function Home() {
             </div>
 
             {/* Pilar 3: Karir */}
-            <div className="group p-8 rounded-3xl bg-gradient-to-br from-slate-50 to-white border border-slate-100 hover:border-navy/50 hover:shadow-xl transition-all duration-300">
-              <div className="w-16 h-16 bg-gradient-to-br from-navy to-navy-light rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-md">
+            <div className="group p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:border-slate-400/50 hover:bg-white hover:shadow-xl transition-all duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-slate-500 to-slate-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-md">
                 <Briefcase className="w-8 h-8 text-white" />
               </div>
-              <h3 className="font-poppins font-bold text-2xl text-navy mb-3 group-hover:text-navy transition-colors">
+              <h3 className="font-poppins font-bold text-2xl text-navy mb-3 group-hover:text-slate-600 transition-colors">
                 Karir Lulusan
               </h3>
               <p className="text-slate-600 mb-8 leading-relaxed">
-                Temukan 8 profesi menarik untuk lulusan sosiologi: dari peneliti, analis kebijakan, hingga UX researcher.
+                Temukan profesi-profesi menarik untuk lulusan sosiologi: dari peneliti, analis kebijakan, hingga UX researcher.
               </p>
               <button
                 onClick={() => navigate("/karir")}
-                className="text-navy font-bold flex items-center gap-2 group-hover:gap-3 transition-all"
+                className="text-slate-500 font-bold flex items-center gap-2 group-hover:gap-3 transition-all group-hover:text-navy"
               >
                 Lihat Prospek Karir
                 <ChevronRight className="w-5 h-5" />

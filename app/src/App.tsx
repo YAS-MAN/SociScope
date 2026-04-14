@@ -1,5 +1,6 @@
-import { useEffect } from "react"; // <-- Tambahkan import useEffect
+import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
+import { useAdminStore } from "@/store/useAdminStore";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ChatbotTeo from "@/components/ChatbotTeo";
@@ -10,6 +11,8 @@ import Karir from "@/pages/Karir";
 import Privasi from "@/pages/Privasi";
 import Syarat from "@/pages/Syarat";
 import Jejaring from "@/pages/Jejaring";
+import Jurnal from "@/pages/Jurnal";
+import Buku from "@/pages/Buku";
 import AdminRoutes from "@/pages/Admin/AdminRoutes";
 import { Toaster } from "sonner";
 function App() {
@@ -32,6 +35,14 @@ function App() {
       window.scrollTo(0, 0);
     }
   }, [location.pathname, location.hash]); // Efek ini akan berjalan setiap kali path atau hash URL berubah
+
+  // --- TAMBAHAN BARU: DATA FETCHING ---
+  const isLoading = useAdminStore(state => state.isLoading);
+  
+  useEffect(() => {
+    // Inisialisasi fetch data seluruh tabel Supabase di awal
+    useAdminStore.getState().initFetch();
+  }, []);
   // ---------------------------------------------
 
   // Deteksi apakah kita di halaman Admin (punya Layout sendiri)
@@ -46,6 +57,15 @@ function App() {
       location.pathname === '/syarat' ? 'bg-white' :
         location.pathname === '/jejaring' ? 'bg-navy' :
           'bg-slate-50';
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-navy flex flex-col items-center justify-center">
+        <div className="w-16 h-16 border-4 border-sage/20 border-t-amber rounded-full animate-spin mb-4" />
+        <p className="text-white font-poppins font-bold animate-pulse">Menghubungkan ke Database...</p>
+      </div>
+    );
+  }
 
   return (
     // Secara dinamis mengubah warna background utama aplikasi.
@@ -65,6 +85,8 @@ function App() {
             <Route path="/jejaring" element={<Jejaring />} />
             <Route path="/privasi" element={<Privasi />} />
             <Route path="/syarat" element={<Syarat />} />
+            <Route path="/jurnal" element={<Jurnal />} />
+            <Route path="/buku" element={<Buku />} />
             <Route path="/admin/*" element={<AdminRoutes />} />
           </Routes>
         </div>

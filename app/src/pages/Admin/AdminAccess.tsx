@@ -35,23 +35,23 @@ export default function AdminAccess() {
         <div className="w-16 h-16 bg-gradient-to-br from-amber to-amber-light rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-amber/20">
           <Lock className="w-8 h-8 text-navy" />
         </div>
-        
+
         <h1 className="font-poppins font-bold text-3xl text-white text-center mb-2">Admin Panel</h1>
-        <p className="text-slate-400 text-center text-sm mb-8">SociScope - Universitas Negeri Surabaya</p>
+        <p className="text-slate-400 text-center text-sm mb-8">SociZone - Universitas Negeri Surabaya</p>
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="block text-xs font-bold text-white/50 uppercase tracking-widest mb-2 px-2">Access Key</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               value={accessKey}
               onChange={(e) => setAccessKey(e.target.value)}
               placeholder="Masukkan kunci akses..."
               className="w-full bg-black/20 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:ring-2 focus:ring-amber/50 focus:border-transparent transition-all"
             />
           </div>
-          
-          <button 
+
+          <button
             type="submit"
             className="w-full bg-amber hover:bg-amber-light text-navy font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
           >

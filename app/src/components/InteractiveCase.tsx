@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Eye, ChevronRight, RotateCcw, Lightbulb, CheckCircle, MessageSquare, Send, User } from 'lucide-react';
-import { interactiveCases, type InteractiveCase as InteractiveCaseType } from '@/data/sociologyData';
+import type { InteractiveCase as InteractiveCaseType } from '@/data/sociologyData';
+import { useAdminStore, type KacamataCase } from '@/store/useAdminStore';
 
 interface SelectedAnswer {
   questionId: string;
@@ -8,30 +9,31 @@ interface SelectedAnswer {
 }
 
 export default function InteractiveCase() {
-  const [selectedCase, setSelectedCase] = useState<InteractiveCaseType | null>(null);
+  const kacamataCases = useAdminStore((state) => state.kacamataCases);
+  const [selectedCase, setSelectedCase] = useState<any>(null);
   const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswer[]>([]);
   const [showAnalysis, setShowAnalysis] = useState(false);
 
   // State untuk Mimbar Bebas (Tanggapan User)
-  const [comments, setComments] = useState<{id: number, name: string, text: string, time: string}[]>([]);
+  const [comments, setComments] = useState<{ id: number, name: string, text: string, time: string }[]>([]);
   const [newComment, setNewComment] = useState("");
   const [userName, setUserName] = useState("");
 
   const handlePostComment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
-    
-    setComments([{ 
-      id: Date.now(), 
-      name: userName.trim() || 'Anonim', 
+
+    setComments([{
+      id: Date.now(),
+      name: userName.trim() || 'Anonim',
       text: newComment.trim(),
-      time: "Baru saja" 
+      time: "Baru saja"
     }, ...comments]);
-    
+
     setNewComment("");
   };
 
-  const handleCaseSelect = (caseItem: InteractiveCaseType) => {
+  const handleCaseSelect = (caseItem: any) => {
     setSelectedCase(caseItem);
     setSelectedAnswers([]);
     setShowAnalysis(false);
@@ -55,8 +57,8 @@ export default function InteractiveCase() {
     setComments([]); // bersihkan juga komentar dari state saat reset
   };
 
-  const allQuestionsAnswered = selectedCase?.questions.every(q => 
-    selectedAnswers.some(a => a.questionId === q.id)
+  const allQuestionsAnswered = selectedCase?.questions.every((q: any) =>
+    selectedAnswers.some((a: any) => a.questionId === q.id)
   );
 
   return (
@@ -79,8 +81,8 @@ export default function InteractiveCase() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-5">
-            {interactiveCases.map(caseItem => (
+          <div className="grid md:grid-cols-3 gap-5 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+            {kacamataCases.length > 0 ? kacamataCases.map(caseItem => (
               <button
                 key={caseItem.id}
                 onClick={() => handleCaseSelect(caseItem)}
@@ -102,7 +104,11 @@ export default function InteractiveCase() {
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </div>
               </button>
-            ))}
+            )) : (
+              <div className="col-span-3 py-10 text-center text-slate-400">
+                Belum ada studi kasus yang ditambahkan dari panel Admin.
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -134,15 +140,15 @@ export default function InteractiveCase() {
 
           {/* Questions Area */}
           <div className="space-y-8">
-            {selectedCase.questions.map((question, qIndex) => (
+            {selectedCase.questions.map((question: any, qIndex: number) => (
               <div key={question.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8">
                 <h4 className="font-poppins font-bold text-white mb-6 text-lg leading-snug flex gap-3">
-                  <span className="text-sage">{qIndex + 1}.</span> 
+                  <span className="text-sage">{qIndex + 1}.</span>
                   {question.text}
                 </h4>
 
                 <div className="space-y-4">
-                  {question.options.map(option => {
+                  {question.options.map((option: any) => {
                     const isSelected = getSelectedAnswer(question.id) === option.id;
                     const showResult = showAnalysis && isSelected;
 
@@ -151,34 +157,31 @@ export default function InteractiveCase() {
                         key={option.id}
                         onClick={() => !showAnalysis && handleAnswerSelect(question.id, option.id)}
                         disabled={showAnalysis}
-                        className={`w-full p-5 rounded-xl border text-left transition-all duration-300 ${
-                          isSelected
+                        className={`w-full p-5 rounded-xl border text-left transition-all duration-300 ${isSelected
                             ? showResult
                               ? 'border-sage bg-sage/10 ring-1 ring-sage/30' // Saat sudah disubmit
                               : 'border-amber bg-amber/10 ring-1 ring-amber/30' // Saat dipilih tapi belum submit
                             : 'border-white/10 bg-black/20 hover:border-amber/50 hover:bg-white/5'
-                        } ${showAnalysis ? 'cursor-default' : 'cursor-pointer'}`}
+                          } ${showAnalysis ? 'cursor-default' : 'cursor-pointer'}`}
                       >
                         <div className="flex items-start gap-4">
                           <div
-                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${
-                              isSelected
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${isSelected
                                 ? showResult ? 'border-sage bg-sage' : 'border-amber bg-amber'
                                 : 'border-slate-500 bg-transparent'
-                            }`}
+                              }`}
                           >
                             {isSelected && <CheckCircle className="w-4 h-4 text-navy" />}
                           </div>
-                          
+
                           <div className="flex-1">
                             <p className={`text-sm md:text-base leading-relaxed ${isSelected ? 'text-white font-medium' : 'text-slate-300'}`}>
                               {option.text}
                             </p>
 
                             {/* Kotak Jawaban Analisis yang Muncul */}
-                            <div className={`grid transition-all duration-500 ease-in-out ${
-                                showResult ? "grid-rows-[1fr] opacity-100 mt-4 pt-4 border-t border-sage/30" : "grid-rows-[0fr] opacity-0 mt-0 pt-0 border-t-0 border-transparent"
-                            }`}>
+                            <div className={`grid transition-all duration-500 ease-in-out ${showResult ? "grid-rows-[1fr] opacity-100 mt-4 pt-4 border-t border-sage/30" : "grid-rows-[0fr] opacity-0 mt-0 pt-0 border-t-0 border-transparent"
+                              }`}>
                               <div className="overflow-hidden">
                                 <div className="bg-sage/10 border border-sage/20 rounded-xl p-4">
                                   <div className="flex items-center gap-2 mb-2">
@@ -221,16 +224,16 @@ export default function InteractiveCase() {
           {showAnalysis && (
             <div className="mt-8 p-6 bg-amber/10 rounded-2xl border border-amber/20 animate-fadeIn flex gap-4 items-start">
               <div className="w-10 h-10 bg-amber/20 rounded-full flex items-center justify-center shrink-0">
-                 <Lightbulb className="w-5 h-5 text-amber-light" />
+                <Lightbulb className="w-5 h-5 text-amber-light" />
               </div>
               <div>
                 <h4 className="font-poppins font-bold text-amber-light mb-2 text-lg">
                   Refleksi Sosiologis
                 </h4>
                 <p className="text-slate-300 text-sm leading-relaxed">
-                  Dalam sosiologi, satu fenomena yang sama bisa dibedah menggunakan lensa yang berbeda. 
-                  Tidak ada jawaban "benar atau salah" mutlak; yang ada adalah sudut pandang mana yang sedang 
-                  kamu gunakan. Ingin melihat analisis dari teori lain? Silakan klik tombol "Kembali" dan pilih 
+                  Dalam sosiologi, satu fenomena yang sama bisa dibedah menggunakan lensa yang berbeda.
+                  Tidak ada jawaban "benar atau salah" mutlak; yang ada adalah sudut pandang mana yang sedang
+                  kamu gunakan. Ingin melihat analisis dari teori lain? Silakan klik tombol "Kembali" dan pilih
                   jawaban yang berbeda!
                 </p>
               </div>
@@ -256,29 +259,29 @@ export default function InteractiveCase() {
               <form onSubmit={handlePostComment} className="mb-8 relative">
                 <div className="flex gap-4">
                   <div className="flex-1 space-y-3">
-                     <input 
-                       type="text" 
-                       placeholder="Nama kamu (opsional)" 
-                       value={userName}
-                       onChange={(e) => setUserName(e.target.value)}
-                       className="w-full px-4 py-2.5 rounded-xl border border-white/20 bg-white/5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sage/50 text-sm"
-                     />
-                     <div className="relative">
-                       <textarea
-                         placeholder="Menurut saya, dari kacamata struktural..."
-                         value={newComment}
-                         onChange={(e) => setNewComment(e.target.value)}
-                         rows={3}
-                         className="w-full px-4 py-3 pr-14 rounded-xl border border-white/20 bg-white/5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sage/50 text-sm resize-none"
-                       ></textarea>
-                       <button 
-                         type="submit"
-                         className="absolute bottom-3 right-3 w-10 h-10 bg-sage hover:bg-sage-light text-navy rounded-lg flex items-center justify-center transition-colors disabled:opacity-50 disabled:bg-slate-500"
-                         disabled={!newComment.trim()}
-                       >
-                         <Send className="w-4 h-4" />
-                       </button>
-                     </div>
+                    <input
+                      type="text"
+                      placeholder="Nama kamu (opsional)"
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-white/20 bg-white/5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sage/50 text-sm"
+                    />
+                    <div className="relative">
+                      <textarea
+                        placeholder="Menurut saya, dari kacamata struktural..."
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        rows={3}
+                        className="w-full px-4 py-3 pr-14 rounded-xl border border-white/20 bg-white/5 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sage/50 text-sm resize-none"
+                      ></textarea>
+                      <button
+                        type="submit"
+                        className="absolute bottom-3 right-3 w-10 h-10 bg-sage hover:bg-sage-light text-navy rounded-lg flex items-center justify-center transition-colors disabled:opacity-50 disabled:bg-slate-500"
+                        disabled={!newComment.trim()}
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </form>

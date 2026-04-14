@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { Eye, Lightbulb, ChevronRight, Info } from "lucide-react";
 import InteractiveCase from "@/components/InteractiveCase";
-import { concepts } from "@/data/sociologyData";
+import { useAdminStore } from "@/store/useAdminStore";
 
 export default function Kacamata() {
+  const concepts = useAdminStore((state) => state.concepts);
   const [selectedConcept, setSelectedConcept] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-slate-50 relative overflow-hidden py-24">
-      {/* Efek Latar Belakang - Dibuat lebih soft untuk light mode */}
-      <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-amber/20 rounded-full blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-navy/10 rounded-full blur-[100px]" />
+    <div className="min-h-screen bg-white relative overflow-hidden py-24">
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header Halaman - Teks Gelap (Navy & Slate) */}

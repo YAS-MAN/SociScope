@@ -1,66 +1,66 @@
-import { Users, GraduationCap, Building, Search, Send, User } from "lucide-react";
-import { useState } from "react";
+import { Users, GraduationCap, Building, Newspaper, Instagram, MessageCircle, ExternalLink, Trophy, User } from "lucide-react";
 import { useAdminStore } from "@/store/useAdminStore";
+import BeritaUnesa from "@/components/BeritaUnesa";
+
+// Data komunitas HMP dengan placeholder link
+const komunitasData = [
+  {
+    id: 1,
+    name: "HMP Sosiologi UNESA",
+    university: "Universitas Negeri Surabaya",
+    members: "120+ anggota",
+    description: "Himpunan Mahasiswa Sosiologi UNESA — pusat kegiatan akademik dan pengabdian masyarakat.",
+    avatar: "H",
+    color: "from-sage to-sage-light",
+    instagram: "https://instagram.com/hmpsosiologiunesa",
+    whatsapp: "https://wa.me/6281234567890",
+    category: "Himpunan Resmi",
+  }
+];
 
 export default function Jejaring() {
   const alumniData = useAdminStore((state) => state.alumniData);
-  const hmpData = useAdminStore((state) => state.hmpData);
-  const [activeChat, setActiveChat] = useState("HMP Sosiologi UNESA");
-  const [messages, setMessages] = useState([
-    { id: 1, sender: "Ketua HMP", text: "Halo teman-teman sosiologi se-Indonesia! Ada info webinar terbaru nih.", time: "10:00 AM", isMe: false },
-    { id: 2, sender: "Saya", text: "Wah menarik! Boleh minta link daftarnya?", time: "10:15 AM", isMe: true },
-  ]);
-  const [newMessage, setNewMessage] = useState("");
-
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMessage.trim()) return;
-
-    setMessages([...messages, {
-      id: Date.now(),
-      sender: "Saya",
-      text: newMessage.trim(),
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      isMe: true
-    }]);
-    setNewMessage("");
-  };
 
   return (
-    <div className="min-h-screen bg-navy relative overflow-hidden py-24">
+    <div className="min-h-screen bg-white relative overflow-hidden py-24">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-sage rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-amber rounded-full blur-3xl" />
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-sage/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-amber/20 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Header */}
         <div className="text-center mb-16 animate-fadeIn">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/20 rounded-full text-sm text-white font-bold mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-sage/10 border border-sage/20 rounded-full text-sm text-sage-dark font-bold mb-4">
             <Users className="w-4 h-4" />
             Kolaborasi & Relasi
           </div>
-          <h2 className="font-poppins font-bold text-4xl md:text-5xl text-white mb-6">Jejaring Sosiologi</h2>
-          <p className="text-slate-300 max-w-2xl mx-auto text-lg leading-relaxed">
-            Bangun koneksi dengan sesama mahasiswa, kenali profil alumni sukses, dan temukan program studi sosiologi dari berbagai kampus.
+          <h2 className="font-poppins font-bold text-4xl md:text-5xl text-navy mb-6">Jejaring Sosiologi</h2>
+          <p className="text-slate-600 max-w-2xl mx-auto text-lg leading-relaxed">
+            Bangun koneksi dengan sesama mahasiswa, kenali profil alumni sukses, baca artikel terbaru, dan temukan komunitas sosiologi terdekat.
           </p>
         </div>
 
-        {/* Section 1: Alumni Sukses */}
+        {/* ========== SECTION 1: ALUMNI SUKSES ========== */}
         <div className="mb-20">
           <div className="flex items-center gap-3 mb-8">
-            <GraduationCap className="w-8 h-8 text-amber" />
-            <h3 className="font-poppins font-bold text-2xl text-white">Alumni Sukses Sosiologi</h3>
+            <GraduationCap className="w-8 h-8 text-amber-dark" />
+            <h3 className="font-poppins font-bold text-2xl text-navy">Alumni Sukses Sosiologi</h3>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {alumniData.map((alumni) => (
-              <div key={alumni.id} className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 shadow-sm hover:border-amber/50 hover:shadow-[0_0_20px_rgba(232,167,53,0.15)] transition-all group">
-                <div className={`w-16 h-16 rounded-full ${alumni.imgColor} flex items-center justify-center text-white mb-4 shadow-md group-hover:scale-110 transition-transform`}>
-                  <User className="w-8 h-8" />
+              <div key={alumni.id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:border-amber/40 hover:shadow-lg hover:-translate-y-1 transition-all group">
+                <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${alumni.imgColor.startsWith('http') || alumni.imgColor.startsWith('data:') ? 'bg-slate-200' : alumni.imgColor} flex items-center justify-center text-white mb-4 shadow-md group-hover:scale-110 transition-transform overflow-hidden`}>
+                  {alumni.imgColor.startsWith('http') || alumni.imgColor.startsWith('data:') ? (
+                    <img src={alumni.imgColor} alt={alumni.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-8 h-8" />
+                  )}
                 </div>
-                <h4 className="font-poppins font-bold text-white text-lg">{alumni.name}</h4>
-                <p className="text-sm font-bold text-amber-light mt-1 mb-2">{alumni.role}</p>
-                <div className="flex items-center gap-2 text-xs text-slate-300 bg-black/20 px-3 py-1.5 rounded-lg w-max border border-white/5">
+                <h4 className="font-poppins font-bold text-navy text-lg">{alumni.name}</h4>
+                <p className="text-sm font-bold text-amber-dark mt-1 mb-2">{alumni.role}</p>
+                <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg w-max border border-slate-200">
                   <Building className="w-3 h-3" />
                   {alumni.agency}
                 </div>
@@ -69,84 +69,105 @@ export default function Jejaring() {
           </div>
         </div>
 
-        {/* Section 2: Chat Komunitas HMP */}
-        <div className="grid lg:grid-cols-3 gap-8 h-[600px] mb-10">
-          {/* Sidebar HMP List */}
-          <div className="bg-navy-dark/50 border border-white/10 rounded-3xl overflow-hidden flex flex-col shadow-lg backdrop-blur-sm">
-            <div className="p-6 bg-navy-light text-white text-center">
-              <h3 className="font-poppins font-bold text-xl uppercase tracking-wider">Komunitas Studi</h3>
+        {/* ========== SECTION 2: ARTIKEL & BERITA ========== */}
+        <div id="artikel" className="mb-20">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-sage/10 rounded-full text-xs text-sage-dark font-bold mb-3 border border-sage/20">
+                <Newspaper className="w-3.5 h-3.5" />
+                Kabar Sosiologi UNESA
+              </div>
+              <h3 className="text-3xl font-poppins font-bold text-navy">
+                Berita & Agenda Terbaru
+              </h3>
+              <p className="text-slate-600 mt-2 max-w-xl">
+                Ikuti perkembangan, berita terbaru, dan kegiatan dari program studi Sosiologi Universitas Negeri Surabaya.
+              </p>
             </div>
-            <div className="p-4 border-b border-white/5 flex items-center gap-2 bg-black/20">
-              <Search className="w-4 h-4 text-slate-400" />
-              <input type="text" placeholder="Cari prodi / kampus..." className="bg-transparent border-none text-sm w-full focus:outline-none text-white placeholder-slate-500" />
-            </div>
-            <div className="flex-1 overflow-y-auto custom-scrollbar">
-              {hmpData.map((hmp, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveChat(hmp)}
-                  className={`w-full text-left p-4 border-b border-white/5 transition-colors flex items-center gap-4 ${activeChat === hmp ? 'bg-sage/20 border-l-4 border-l-sage' : 'hover:bg-white/5'}`}
-                >
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shrink-0 ${activeChat === hmp ? 'bg-sage text-white shadow-lg shadow-sage/30' : 'bg-white/10 text-slate-300'}`}>
-                    {hmp.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 className={`font-poppins font-bold text-sm ${activeChat === hmp ? 'text-sage-light' : 'text-white'}`}>{hmp}</h4>
-                    <p className="text-xs text-slate-400 truncate w-32">Pilih untuk mengobrol...</p>
-                  </div>
-                </button>
-              ))}
-            </div>
+            <a
+              href="https://sosiologi.fisipol.unesa.ac.id/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-bold text-slate-500 hover:text-amber-dark transition-colors flex items-center gap-2 group w-max border border-slate-200 px-4 py-2 rounded-xl hover:border-amber/40 hover:bg-amber/5"
+            >
+              Kunjungi Web Resmi Prodi
+              <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </a>
           </div>
+          <BeritaUnesa />
+        </div>
 
-          {/* Chat Room */}
-          <div className="lg:col-span-2 bg-navy-dark/50 border border-white/10 rounded-3xl overflow-hidden flex flex-col shadow-lg backdrop-blur-sm">
-            <div className="p-6 bg-navy-light border-b border-white/10 flex items-center gap-4">
-              <div className="w-12 h-12 bg-sage text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg shadow-sage/30">
-                {activeChat.charAt(0)}
-              </div>
-              <div>
-                <h3 className="font-poppins font-bold text-white text-lg">{activeChat}</h3>
-                <p className="text-xs text-sage-light font-medium flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-sage-light inline-block animate-pulse"></span> Online
-                </p>
-              </div>
-            </div>
+        {/* ========== SECTION 3: KOMUNITAS STUDI ========== */}
+        <div id="komunitas" className="mb-10">
+          <div className="flex items-center gap-3 mb-3">
+            <Trophy className="w-8 h-8 text-sage" />
+            <h3 className="font-poppins font-bold text-2xl text-navy">Komunitas & Himpunan Sosiologi</h3>
+          </div>
+          <p className="text-slate-600 mb-10 max-w-2xl">
+            Temukan komunitas mahasiswa sosiologi dari berbagai kampus. Bergabung, berkolaborasi, dan bangun jejaring akademik yang kuat.
+          </p>
 
-            <div className="flex-1 bg-black/20 p-6 overflow-y-auto flex flex-col gap-4 custom-scrollbar">
-              <div className="text-center text-xs text-slate-400 bg-white/5 border border-white/10 py-1 rounded-full w-max mx-auto px-4">Hari ini</div>
-              {messages.map((msg) => (
-                <div key={msg.id} className={`flex max-w-[80%] ${msg.isMe ? 'ml-auto flex-row-reverse' : ''} gap-3`}>
-                  {!msg.isMe && (
-                    <div className="w-8 h-8 rounded-full bg-white/10 text-white shrink-0 flex items-center justify-center border border-white/20">
-                      <User className="w-4 h-4" />
-                    </div>
-                  )}
-                  <div>
-                    {!msg.isMe && <span className="text-xs font-bold text-slate-400 ml-1 mb-1 block">{msg.sender}</span>}
-                    <div className={`p-4 rounded-2xl ${msg.isMe ? 'bg-sage text-white rounded-tr-none shadow-md shadow-sage/20' : 'bg-white/10 border border-white/20 text-white rounded-tl-none shadow-sm'}`}>
-                      <p className="text-sm">{msg.text}</p>
-                    </div>
-                    <span className={`text-[10px] text-slate-400 mt-1 block ${msg.isMe ? 'text-right mr-1' : 'ml-1'}`}>{msg.time}</span>
+          <div className="max-w-4xl mx-auto">
+            {komunitasData.map((komunitas, idx) => (
+              <div
+                key={komunitas.id}
+                className="group relative bg-white border border-slate-200 rounded-3xl p-8 hover:border-amber/40 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden animate-fadeIn flex flex-col md:flex-row items-center gap-8 text-center md:text-left"
+                style={{ animationDelay: `${idx * 80}ms` }}
+              >
+                {/* Category badge */}
+                <div className="absolute top-6 right-6">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-md">
+                    {komunitas.category}
+                  </span>
+                </div>
+
+                {/* Avatar */}
+                <div className={`w-28 h-28 md:w-32 md:h-32 rounded-3xl bg-gradient-to-br ${komunitas.color} flex items-center justify-center text-5xl font-black text-white shadow-xl shrink-0`}>
+                  {komunitas.avatar}
+                </div>
+
+                {/* Content */}
+                <div className="flex-1">
+                  <h4 className="font-poppins font-bold text-navy text-2xl md:text-3xl leading-tight group-hover:text-amber-dark transition-colors">{komunitas.name}</h4>
+                  <p className="text-sm text-slate-500 mt-1 mb-3">{komunitas.university}</p>
+
+                  {/* Members badge */}
+                  <div className="inline-flex items-center gap-1.5 text-xs font-bold text-sage-dark bg-sage/10 border border-sage/20 px-3 py-1.5 rounded-full mb-4">
+                    <Users className="w-4 h-4" />
+                    {komunitas.members}
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-base text-slate-600 leading-relaxed mb-6">
+                    {komunitas.description}
+                  </p>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                    <a
+                      href={komunitas.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-pink-600/80 to-purple-600/80 hover:from-pink-500 hover:to-purple-500 text-white text-sm font-bold transition-all shadow-md hover:shadow-pink-500/30 hover:-translate-y-0.5"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Instagram className="w-4 h-4" />
+                      Instagram
+                    </a>
+                    <a
+                      href={komunitas.whatsapp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-green-600/80 hover:bg-green-500 text-white text-sm font-bold transition-all shadow-md hover:shadow-green-500/30 hover:-translate-y-0.5"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      WhatsApp
+                    </a>
                   </div>
                 </div>
-              ))}
-            </div>
-
-            <div className="p-4 bg-navy-light border-t border-white/10">
-              <form onSubmit={handleSendMessage} className="flex gap-2 relative">
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder={`Kirim pesan ke forum ${activeChat}...`}
-                  className="flex-1 bg-black/20 border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sage/50 text-sm text-white placeholder-slate-400"
-                />
-                <button type="submit" disabled={!newMessage.trim()} className="w-12 h-12 bg-sage hover:bg-sage-light text-navy rounded-xl flex items-center justify-center transition-colors shrink-0 shadow-md disabled:bg-slate-600 disabled:text-slate-400">
-                  <Send className="w-5 h-5" />
-                </button>
-              </form>
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

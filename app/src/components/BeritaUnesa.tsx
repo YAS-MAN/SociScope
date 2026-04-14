@@ -11,7 +11,7 @@ interface UnesaArticle {
     timestamp: number; // Tambahan untuk memastikan urutan akurat
 }
 
-export default function BeritaUnesa() {
+export default function BeritaUnesa({ isDark = false }: { isDark?: boolean }) {
     const hiddenRssLinks = useAdminStore((state) => state.hiddenRssLinks);
     const [articles, setArticles] = useState<UnesaArticle[]>([]);
     const [loading, setLoading] = useState(true);
@@ -126,14 +126,18 @@ export default function BeritaUnesa() {
     const visibleArticles = articles.filter(a => !hiddenRssLinks.includes(a.link));
 
     return (
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 animate-fadeIn">
             {visibleArticles.map((item, index) => (
                 <a
                     key={index}
                     href={item.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group block flex flex-col"
+                    className={`rounded-3xl border overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group block flex flex-col ${
+                      isDark
+                        ? 'bg-white/5 border-white/10 hover:border-white/25 hover:bg-white/10'
+                        : 'bg-white border-slate-200 hover:border-slate-300'
+                    }`}
                 >
                     <div className="relative h-48 overflow-hidden bg-slate-100 shrink-0 border-b border-slate-100">
                         <div className="absolute inset-0 bg-navy/10 group-hover:bg-transparent transition-colors z-10" />
@@ -151,14 +155,14 @@ export default function BeritaUnesa() {
                     </div>
 
                     <div className="p-6 flex flex-col flex-1">
-                        <div className="flex items-center gap-2 text-xs text-slate-500 mb-3 font-medium">
+                        <div className={`flex items-center gap-2 text-xs mb-3 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                             <Calendar className="w-3.5 h-3.5 text-sage" />
                             {item.date}
                         </div>
-                        <h4 className="font-poppins font-bold text-navy text-lg mb-3 line-clamp-3 group-hover:text-sage transition-colors leading-snug">
+                        <h4 className={`font-poppins font-bold text-lg mb-3 line-clamp-3 group-hover:text-sage transition-colors leading-snug ${isDark ? 'text-white' : 'text-navy'}`}>
                             {item.title}
                         </h4>
-                        <p className="text-slate-600 text-sm leading-relaxed mb-5 line-clamp-3 flex-1">
+                        <p className={`text-sm leading-relaxed mb-5 line-clamp-3 flex-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                             {item.description}
                         </p>
                         <div className="text-sm font-bold text-sage flex items-center gap-2 group/btn mt-auto">

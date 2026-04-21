@@ -66,11 +66,11 @@ export default function Footer() {
           {/* Brand & Kontak */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-3 mb-6 group w-max">
-              <div className="w-12 h-12 bg-gradient-to-br from-sage to-sage-light rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-lg shadow-sage/20">
-                <Glasses className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 bg-amber rounded-xl overflow-hidden flex items-center justify-center transition-transform group-hover:scale-105 shadow-lg shadow-amber/30">
+                <img src="/logo_sociozone_raw.png" alt="SocioZone" className="w-full h-full object-contain p-0.5" />
               </div>
               <div>
-                <h2 className="font-poppins font-bold text-2xl">SociZone</h2>
+                <h2 className="font-poppins font-bold text-2xl">SocioZone</h2>
                 <p className="text-xs text-sage-light font-medium uppercase tracking-widest">
                   Platform Edukasi
                 </p>
@@ -83,13 +83,13 @@ export default function Footer() {
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-4">
               <a
-                href="mailto:hello@socizone.id"
+                href="mailto:hello@sociozone.id"
                 className="flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors group w-max"
               >
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-sage/20 transition-colors">
                   <Mail className="w-4 h-4 text-sage" />
                 </div>
-                <span>hello@socizone.id</span>
+                <span>hello@sociozone.id</span>
               </a>
               <a
                 href="tel:+6281234567890"
@@ -98,10 +98,10 @@ export default function Footer() {
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-sage/20 transition-colors">
                   <Phone className="w-4 h-4 text-sage" />
                 </div>
-                <span>+62 812 3456 7890</span>
+                <span>+62 812 9234 9096</span>
               </a>
               <a
-                href="https://instagram.com/socizone.id"
+                href="https://instagram.com/sociozone"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors group w-max"
@@ -109,7 +109,7 @@ export default function Footer() {
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-sage/20 transition-colors">
                   <Instagram className="w-4 h-4 text-sage" />
                 </div>
-                <span>@socizone.id</span>
+                <span>@sociozone</span>
               </a>
               <div className="flex items-center gap-3 text-sm text-slate-300 cursor-default">
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
@@ -170,7 +170,7 @@ export default function Footer() {
             <div className="hidden md:block flex-1"></div>
 
             <p className="text-sm text-slate-400 flex items-center justify-center flex-1">
-              © {currentYear} SociZone.
+              © {currentYear} SocioZone.
             </p>
 
             <div className="flex items-center justify-center md:justify-end gap-6 flex-1">

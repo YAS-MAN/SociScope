@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Glasses, BookOpen, Briefcase, Home, Users } from "lucide-react";
+import { Menu, X, BookOpen, Briefcase, Home, Users, Glasses } from "lucide-react";
 
 const navItems = [
   { id: "/", label: "Beranda", icon: Home },
@@ -49,15 +49,15 @@ export default function Header() {
           <div className="flex items-center justify-between h-full">
 
             {/* LOGO */}
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all ${useDarkText ? 'bg-navy text-white' : 'bg-gradient-to-br from-navy to-sage border border-white/10'
-                }`}>
-                <Glasses className="w-6 h-6 text-white" />
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center shadow-lg bg-amber shrink-0 border border-amber-light/30">
+                <img src="/logo_sociozone_raw.png" alt="SocioZone Logo" className="w-full h-full object-contain p-0.5" />
               </div>
               <div className="text-left">
-                <h1 className={`font-poppins font-bold text-lg leading-tight transition-colors ${useDarkText ? 'text-navy' : 'text-white'
-                  }`}>
-                  SociZone
+                <h1 className={`font-poppins font-bold text-lg leading-tight transition-colors ${
+                  useDarkText ? 'text-navy' : 'text-white'
+                }`}>
+                  SocioZone
                 </h1>
               </div>
             </Link>
@@ -139,7 +139,7 @@ export default function Header() {
 
         {/* Footer branding in mobile menu */}
         <div className="text-center mt-6 pt-6 border-t border-white/10">
-          <p className="text-white/40 text-xs">SociZone — Platform Edukasi Sosiologi</p>
+          <p className="text-white/40 text-xs">SocioZone — Platform Edukasi Sosiologi</p>
         </div>
       </div>
     </>

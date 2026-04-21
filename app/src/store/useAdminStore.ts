@@ -13,6 +13,7 @@ export interface AlumniItem {
   role: string;
   agency: string;
   imgColor: string;
+  linkedin?: string;
 }
 
 export interface AuditLog {
@@ -46,6 +47,7 @@ export interface Sociologist {
   title: string;
   quote: string;
   contribution: string;
+  bio?: string;
   image: string;
   color: string;
   accent: string;
@@ -159,7 +161,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   careers: initialCareers,
   alumniData: alumniData,
   hmpData: hmpData,
-  hiddenRssLinks: [],
+  hiddenRssLinks: (() => { try { return JSON.parse(localStorage.getItem('sz_hiddenRss') || '[]'); } catch { return []; } })() as string[],
   concepts: [],
   teoResponses: [],
   sociologists: [],
@@ -172,7 +174,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     { id: '2', sender: 'HMP Sosiologi', topic: 'Jejaring', content: 'Apakah prodi bisa bantu share info seminar nasional?', date: '11 Apr 2026', status: 'Unread' },
   ],
   auditLogs: [
-    { id: 'log-1', action: 'Sistem SociZone diinisiasi', timestamp: new Date(), user: 'Super Admin' }
+    { id: 'log-1', action: 'Sistem SocioZone diinisiasi', timestamp: new Date(), user: 'Super Admin' }
   ],
   
   initFetch: async () => {
@@ -388,13 +390,20 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   
   toggleRssVisibility: (link) => {
     const hidden = get().hiddenRssLinks;
-    if (hidden.includes(link)) {
-      set({ hiddenRssLinks: hidden.filter(l => l !== link) });
+    const normalize = (l: string) => l.split('?')[0].split('#')[0].trim().replace(/\/$/, '').toLowerCase();
+    const target = normalize(link);
+    
+    let newHidden: string[];
+    if (hidden.some(l => normalize(l) === target)) {
+      newHidden = hidden.filter(l => normalize(l) !== target);
       get().logAction(`Menampilkan artikel RSS: ${link}`);
     } else {
-      set({ hiddenRssLinks: [...hidden, link] });
+      newHidden = [...hidden, link];
       get().logAction(`Menyembunyikan artikel RSS: ${link}`);
     }
+    
+    set({ hiddenRssLinks: newHidden });
+    try { localStorage.setItem('sz_hiddenRss', JSON.stringify(newHidden)); } catch {}
   },
 
   // Interactive Cases CRUD
@@ -477,11 +486,12 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   // === JURNAL CRUD === 
   addJurnal: async (jurnal) => {
     try {
-      const { data, error } = await supabase.from('jurnals').insert([jurnal]).select();
+      const { id, ...payload } = jurnal; // Supabase autogenerates ID
+      const { data, error } = await supabase.from('jurnals').insert([payload]).select();
       if (error) throw error;
       set((state) => ({ jurnals: [...state.jurnals, data[0]] }));
       get().logAction('Menambahkan Referensi Jurnal: ' + jurnal.title);
-    } catch(e: any) { console.error(e); }
+    } catch(e: any) { console.error('Add Jurnal Error:', e); }
   },
   updateJurnal: async (id, jurnal) => {
     try {
@@ -505,11 +515,12 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   // === BUKU CRUD === 
   addBook: async (book) => {
     try {
-      const { data, error } = await supabase.from('books').insert([book]).select();
+      const { id, ...payload } = book; // Supabase autogenerates ID
+      const { data, error } = await supabase.from('books').insert([payload]).select();
       if (error) throw error;
       set((state) => ({ books: [...state.books, data[0]] }));
       get().logAction('Menambahkan Referensi Buku: ' + book.title);
-    } catch(e: any) { console.error(e); }
+    } catch(e: any) { console.error('Add Book Error:', e); }
   },
   updateBook: async (id, book) => {
     try {
@@ -533,11 +544,13 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   // === ARTICLE CRUD === 
   addArticle: async (article) => {
     try {
-      const { data, error } = await supabase.from('articles').insert([article]).select();
+      // Hapus 'id' agar Supabase BIGSERIAL auto-generate id yg valid
+      const { id: _id, ...insertData } = article;
+      const { data, error } = await supabase.from('articles').insert([insertData]).select();
       if (error) throw error;
       set((state) => ({ articles: [...state.articles, data[0]] }));
       get().logAction('Menambahkan Artikel: ' + article.title);
-    } catch(e: any) { console.error(e); }
+    } catch(e: any) { console.error('addArticle error:', e); }
   },
   updateArticle: async (id, article) => {
     try {

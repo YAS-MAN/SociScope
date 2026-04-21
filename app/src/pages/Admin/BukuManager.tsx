@@ -206,7 +206,7 @@ export default function BukuManager() {
                       </a>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex justify-end gap-2 transition-opacity">
                         <button
                           onClick={() => handleEdit(book)}
                           className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"

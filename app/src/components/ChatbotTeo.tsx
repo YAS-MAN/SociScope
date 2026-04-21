@@ -16,7 +16,7 @@ export default function ChatbotTeo() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
-      text: 'Halo! Saya SociZ, asisten virtual SociZone. Tanyakan apa saja tentang teori sosiologi, konsep kacamata, atau prospek karir!',
+      text: 'Halo! Saya SociZ, asisten virtual SocioZone. Tanyakan apa saja tentang teori sosiologi, konsep kacamata, atau prospek karir!',
       sender: 'bot',
       timestamp: new Date()
     }
@@ -123,7 +123,7 @@ export default function ChatbotTeo() {
             </div>
             <div>
               <h3 className="font-poppins font-bold text-white text-sm">SociZ</h3>
-              <p className="text-xs text-white/70">Asisten Sosiologi Virtual · SociZone</p>
+              <p className="text-xs text-white/70">Asisten Sosiologi Virtual · SocioZone</p>
             </div>
           </div>
           

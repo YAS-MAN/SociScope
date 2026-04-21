@@ -18,6 +18,7 @@ export default function FounderManager() {
     title: '',
     quote: '',
     contribution: '',
+    bio: '',
     image: '',
     color: 'from-amber/30 to-amber/10',
     accent: '#e8a735'
@@ -35,7 +36,7 @@ export default function FounderManager() {
     if (!checkRole()) return;
     setEditingId(null);
     setFormData({
-      name: '', years: '', title: '', quote: '', contribution: '', image: '',
+      name: '', years: '', title: '', quote: '', contribution: '', bio: '', image: '',
       color: 'from-amber/30 to-amber/10', accent: '#e8a735'
     });
     setIsModalOpen(true);
@@ -220,7 +221,20 @@ export default function FounderManager() {
 
               <div>
                 <label className="block text-sm font-bold text-navy mb-2">Kontribusi Spesifik</label>
-                <textarea required value={formData.contribution} onChange={(e) => setFormData({...formData, contribution: e.target.value})} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl h-24 focus:outline-none focus:border-amber text-sm" placeholder="Jelaskan kontribusi tokoh pada sosiologi..."></textarea>
+                <textarea required value={formData.contribution} onChange={(e) => setFormData({...formData, contribution: e.target.value})} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl h-24 focus:outline-none focus:border-amber text-sm" placeholder="Jelaskan kontribusi tokoh pada sosiologi (ringkas, 1-2 kalimat)..."></textarea>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-navy mb-2">
+                  Biografi Lengkap
+                  <span className="ml-2 text-xs font-normal text-slate-400">(Ditampilkan di halaman Teori — profil tokoh)</span>
+                </label>
+                <textarea
+                  value={formData.bio ?? ''}
+                  onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl h-40 focus:outline-none focus:border-amber text-sm resize-y"
+                  placeholder="Tulis biografi panjang tokoh di sini. Ceritakan latar belakang, pemikiran utama, karya-karya penting, dan warisan intelektualnya (3-5 paragraf)..."
+                />
               </div>
 
               <div className="pt-6 border-t border-slate-100 flex justify-end gap-3">

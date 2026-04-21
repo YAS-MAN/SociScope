@@ -22,8 +22,6 @@ function App() {
   // --- TAMBAHAN BARU: LOGIKA SCROLL OTOMATIS ---
   useEffect(() => {
     if (location.hash) {
-      // Jika URL memiliki hash (contoh: /karir#peta dari Footer)
-      // Kita beri jeda 100ms agar React selesai me-render komponen halamannya dulu
       setTimeout(() => {
         const element = document.getElementById(location.hash.substring(1));
         if (element) {
@@ -31,16 +29,22 @@ function App() {
         }
       }, 100);
     } else {
-      // Jika perpindahan halaman biasa (tanpa hash), scroll instan ke paling atas
       window.scrollTo(0, 0);
     }
-  }, [location.pathname, location.hash]); // Efek ini akan berjalan setiap kali path atau hash URL berubah
+  }, [location.pathname, location.hash]);
+
+  // --- PAGE VIEW TRACKING (skip halaman admin) ---
+  useEffect(() => {
+    if (location.pathname.startsWith('/admin')) return;
+    import('@/lib/supabase').then(({ supabase }) => {
+      supabase.from('page_views').insert([{ page: location.pathname }]).then(() => {});
+    });
+  }, [location.pathname]);
 
   // --- TAMBAHAN BARU: DATA FETCHING ---
   const isLoading = useAdminStore(state => state.isLoading);
   
   useEffect(() => {
-    // Inisialisasi fetch data seluruh tabel Supabase di awal
     useAdminStore.getState().initFetch();
   }, []);
   // ---------------------------------------------
@@ -94,7 +98,7 @@ function App() {
 
       {!isAdminPage && <Footer />}
       {!isAdminPage && <ChatbotTeo />}
-      <Toaster position="top-right" theme="dark" richColors />
+      <Toaster position="top-right" theme="light" richColors />
     </div>
   );
 }

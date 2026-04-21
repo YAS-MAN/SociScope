@@ -16,7 +16,8 @@ export default function AlumniManager() {
     name: '',
     role: '',
     agency: '',
-    imgColor: 'bg-blue-500'
+    imgColor: 'bg-blue-500',
+    linkedin: ''
   });
 
   const checkRole = () => {
@@ -31,7 +32,7 @@ export default function AlumniManager() {
     if (!checkRole()) return;
     setEditingId(null);
     setFormData({
-      name: '', role: '', agency: '', imgColor: 'bg-blue-500'
+      name: '', role: '', agency: '', imgColor: 'bg-blue-500', linkedin: ''
     });
     setIsModalOpen(true);
   };
@@ -208,6 +209,12 @@ export default function AlumniManager() {
                 <label className="block text-sm font-bold text-navy mb-2">Tautan Foto Profil (Opsional)</label>
                 <input type="url" value={formData.imgColor !== 'bg-blue-500' && (formData.imgColor?.startsWith('http') || formData.imgColor?.startsWith('data:')) ? formData.imgColor : ''} onChange={(e) => setFormData({...formData, imgColor: e.target.value || 'bg-blue-500'})} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-amber text-sm" placeholder="https://..." />
                 <p className="text-xs text-slate-500 mt-2">Masukkan URL gambar valid. Biarkan kosong jika ingin avatar berupa inisial warna.</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-navy mb-2">Profile LinkedIn (Opsional)</label>
+                <input type="url" value={formData.linkedin || ''} onChange={(e) => setFormData({...formData, linkedin: e.target.value})} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-amber text-sm" placeholder="https://linkedin.com/in/..." />
+                <p className="text-xs text-slate-500 mt-2">Tautan ini akan membuat card alumni bisa di klik dan membuka profil LinkedIn-nya.</p>
               </div>
 
               <div className="pt-6 border-t border-slate-100 flex justify-end gap-3">

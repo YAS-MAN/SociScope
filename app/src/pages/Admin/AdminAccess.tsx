@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { useAdminStore } from '@/store/useAdminStore';
-import { Lock, ArrowRight, Home } from 'lucide-react';
+import { Lock, ArrowRight, Home, Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
 export default function AdminAccess() {
   const [accessKey, setAccessKey] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const login = useAdminStore(state => state.login);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     const success = login(accessKey);
     if (!success) {
-      toast.error('Access Key tidak valid. Petunjuk: coba "admin123"');
+      toast.error('Access Key tidak valid. Password salah.');
     } else {
       toast.success('Berhasil login ke Admin Panel');
     }
@@ -37,18 +38,27 @@ export default function AdminAccess() {
         </div>
 
         <h1 className="font-poppins font-bold text-3xl text-white text-center mb-2">Admin Panel</h1>
-        <p className="text-slate-400 text-center text-sm mb-8">SociZone - Universitas Negeri Surabaya</p>
+        <p className="text-slate-400 text-center text-sm mb-8">SocioZone - Universitas Negeri Surabaya</p>
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="block text-xs font-bold text-white/50 uppercase tracking-widest mb-2 px-2">Access Key</label>
-            <input
-              type="password"
-              value={accessKey}
-              onChange={(e) => setAccessKey(e.target.value)}
-              placeholder="Masukkan kunci akses..."
-              className="w-full bg-black/20 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:ring-2 focus:ring-amber/50 focus:border-transparent transition-all"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={accessKey}
+                onChange={(e) => setAccessKey(e.target.value)}
+                placeholder="Masukkan kunci akses..."
+                className="w-full bg-black/20 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:ring-2 focus:ring-amber/50 focus:border-transparent transition-all pr-12"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors focus:outline-none"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
 
           <button

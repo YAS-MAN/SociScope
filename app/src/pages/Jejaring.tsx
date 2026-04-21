@@ -49,23 +49,42 @@ export default function Jejaring() {
             <h3 className="font-poppins font-bold text-2xl text-navy">Alumni Sukses Sosiologi</h3>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {alumniData.map((alumni) => (
-              <div key={alumni.id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:border-amber/40 hover:shadow-lg hover:-translate-y-1 transition-all group">
-                <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${alumni.imgColor.startsWith('http') || alumni.imgColor.startsWith('data:') ? 'bg-slate-200' : alumni.imgColor} flex items-center justify-center text-white mb-4 shadow-md group-hover:scale-110 transition-transform overflow-hidden`}>
-                  {alumni.imgColor.startsWith('http') || alumni.imgColor.startsWith('data:') ? (
-                    <img src={alumni.imgColor} alt={alumni.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <User className="w-8 h-8" />
+            {alumniData.map((alumni) => {
+              const CardWrapper = alumni.linkedin ? 'a' : 'div';
+              const cardProps = alumni.linkedin ? { href: alumni.linkedin, target: "_blank", rel: "noopener noreferrer" } : {};
+
+              return (
+                <CardWrapper key={alumni.id} {...cardProps as any} className={`bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all group relative overflow-hidden ${alumni.linkedin ? 'hover:border-blue-500 hover:shadow-lg hover:-translate-y-1 block cursor-pointer' : 'hover:border-amber/40 hover:shadow-lg hover:-translate-y-1 block'}`}>
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${alumni.imgColor.startsWith('http') || alumni.imgColor.startsWith('data:') ? 'bg-slate-200' : alumni.imgColor} flex items-center justify-center text-white mb-4 shadow-md group-hover:scale-110 transition-transform overflow-hidden relative z-10`}>
+                    {alumni.imgColor.startsWith('http') || alumni.imgColor.startsWith('data:') ? (
+                      <img src={alumni.imgColor} alt={alumni.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-8 h-8" />
+                    )}
+                  </div>
+                  <h4 className="font-poppins font-bold text-navy text-lg relative z-10">{alumni.name}</h4>
+                  <p className="text-sm font-bold text-amber-dark mt-1 mb-2 relative z-10">{alumni.role}</p>
+                  <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg w-max border border-slate-200 relative z-10">
+                    <Building className="w-3 h-3" />
+                    {alumni.agency}
+                  </div>
+
+                  {alumni.linkedin && (
+                    <>
+                      {/* Hover Glow Effect */}
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                      {/* LinkedIn Icon */}
+                      <div className="absolute top-4 right-4 translate-x-8 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 z-20">
+                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 text-white hover:scale-110 transition-transform">
+                          <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>
+                        </div>
+                      </div>
+                    </>
                   )}
-                </div>
-                <h4 className="font-poppins font-bold text-navy text-lg">{alumni.name}</h4>
-                <p className="text-sm font-bold text-amber-dark mt-1 mb-2">{alumni.role}</p>
-                <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg w-max border border-slate-200">
-                  <Building className="w-3 h-3" />
-                  {alumni.agency}
-                </div>
-              </div>
-            ))}
+                </CardWrapper>
+              );
+            })}
           </div>
         </div>
 
@@ -153,16 +172,6 @@ export default function Jejaring() {
                     >
                       <Instagram className="w-4 h-4" />
                       Instagram
-                    </a>
-                    <a
-                      href={komunitas.whatsapp}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-green-600/80 hover:bg-green-500 text-white text-sm font-bold transition-all shadow-md hover:shadow-green-500/30 hover:-translate-y-0.5"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                      WhatsApp
                     </a>
                   </div>
                 </div>

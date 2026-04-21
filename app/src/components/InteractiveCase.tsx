@@ -1,7 +1,16 @@
-import { useState } from 'react';
-import { Eye, ChevronRight, RotateCcw, Lightbulb, CheckCircle, MessageSquare, Send, User } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Eye, ChevronRight, RotateCcw, Lightbulb, CheckCircle, MessageSquare, Send, User, Loader2 } from 'lucide-react';
 import type { InteractiveCase as InteractiveCaseType } from '@/data/sociologyData';
 import { useAdminStore, type KacamataCase } from '@/store/useAdminStore';
+import { supabase } from '@/lib/supabase';
+
+interface CaseComment {
+  id: number;
+  case_id: string;
+  name: string;
+  text: string;
+  created_at: string;
+}
 
 interface SelectedAnswer {
   questionId: string;
@@ -14,23 +23,61 @@ export default function InteractiveCase() {
   const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswer[]>([]);
   const [showAnalysis, setShowAnalysis] = useState(false);
 
-  // State untuk Mimbar Bebas (Tanggapan User)
-  const [comments, setComments] = useState<{ id: number, name: string, text: string, time: string }[]>([]);
-  const [newComment, setNewComment] = useState("");
-  const [userName, setUserName] = useState("");
+  // State untuk Mimbar Bebas (Tanggapan User) — persisted via Supabase
+  const [comments, setComments] = useState<CaseComment[]>([]);
+  const [newComment, setNewComment] = useState('');
+  const [userName, setUserName] = useState('');
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [postingComment, setPostingComment] = useState(false);
 
-  const handlePostComment = (e: React.FormEvent) => {
+  // Fetch komentar dari Supabase setiap kali kasus berubah
+  const fetchComments = useCallback(async (caseId: string) => {
+    setCommentsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('case_comments')
+        .select('*')
+        .eq('case_id', caseId)
+        .order('created_at', { ascending: false });
+      if (!error && data) setComments(data as CaseComment[]);
+    } catch (e) {
+      console.error('Gagal memuat komentar:', e);
+    } finally {
+      setCommentsLoading(false);
+    }
+  }, []);
+
+  // Jalankan fetch saat kasus dipilih
+  useEffect(() => {
+    if (selectedCase?.id) fetchComments(selectedCase.id);
+    else setComments([]);
+  }, [selectedCase?.id, fetchComments]);
+
+  const handlePostComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newComment.trim()) return;
+    if (!newComment.trim() || !selectedCase?.id) return;
 
-    setComments([{
-      id: Date.now(),
-      name: userName.trim() || 'Anonim',
-      text: newComment.trim(),
-      time: "Baru saja"
-    }, ...comments]);
-
-    setNewComment("");
+    setPostingComment(true);
+    try {
+      const payload = {
+        case_id: selectedCase.id,
+        name: userName.trim() || 'Anonim',
+        text: newComment.trim(),
+      };
+      const { data, error } = await supabase
+        .from('case_comments')
+        .insert([payload])
+        .select()
+        .single();
+      if (!error && data) {
+        setComments(prev => [data as CaseComment, ...prev]);
+        setNewComment('');
+      }
+    } catch (e) {
+      console.error('Gagal menyimpan komentar:', e);
+    } finally {
+      setPostingComment(false);
+    }
   };
 
   const handleCaseSelect = (caseItem: any) => {
@@ -57,9 +104,9 @@ export default function InteractiveCase() {
     setComments([]); // bersihkan juga komentar dari state saat reset
   };
 
-  const allQuestionsAnswered = selectedCase?.questions.every((q: any) =>
+  const allQuestionsAnswered = selectedCase?.questions?.every((q: any) =>
     selectedAnswers.some((a: any) => a.questionId === q.id)
-  );
+  ) ?? false;
 
   return (
     <div className="bg-navy rounded-[32px] shadow-2xl overflow-hidden border border-navy-light text-white relative">
@@ -140,7 +187,7 @@ export default function InteractiveCase() {
 
           {/* Questions Area */}
           <div className="space-y-8">
-            {selectedCase.questions.map((question: any, qIndex: number) => (
+            {selectedCase.questions?.map((question: any, qIndex: number) => (
               <div key={question.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8">
                 <h4 className="font-poppins font-bold text-white mb-6 text-lg leading-snug flex gap-3">
                   <span className="text-sage">{qIndex + 1}.</span>
@@ -184,8 +231,8 @@ export default function InteractiveCase() {
                               }`}>
                               <div className="overflow-hidden">
                                 <div className="bg-sage/10 border border-sage/20 rounded-xl p-4">
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-sage bg-sage/20 px-2 py-0.5 rounded">
+                                  <div className="flex flex-col md:flex-row md:items-center items-start gap-2 md:gap-3 mb-3">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-sage bg-sage/20 px-2 py-1 rounded shrink-0 w-max">
                                       Lensa Digunakan:
                                     </span>
                                     <span className="text-sm font-bold text-white">
@@ -277,9 +324,11 @@ export default function InteractiveCase() {
                       <button
                         type="submit"
                         className="absolute bottom-3 right-3 w-10 h-10 bg-sage hover:bg-sage-light text-navy rounded-lg flex items-center justify-center transition-colors disabled:opacity-50 disabled:bg-slate-500"
-                        disabled={!newComment.trim()}
+                        disabled={!newComment.trim() || postingComment}
                       >
-                        <Send className="w-4 h-4" />
+                        {postingComment
+                          ? <Loader2 className="w-4 h-4 animate-spin" />
+                          : <Send className="w-4 h-4" />}
                       </button>
                     </div>
                   </div>
@@ -287,7 +336,12 @@ export default function InteractiveCase() {
               </form>
 
               {/* List Argumen */}
-              {comments.length > 0 && (
+              {commentsLoading ? (
+                <div className="flex items-center justify-center py-8 gap-3 text-slate-400">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span className="text-sm">Memuat tanggapan...</span>
+                </div>
+              ) : comments.length > 0 ? (
                 <div className="space-y-4 pt-6 border-t border-white/10">
                   <h5 className="font-poppins font-bold text-white text-sm">
                     Tanggapan Teman ({comments.length})
@@ -301,7 +355,11 @@ export default function InteractiveCase() {
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-1">
                             <span className="font-bold text-sm text-amber-light">{comment.name}</span>
-                            <span className="text-xs text-slate-400">{comment.time}</span>
+                            <span className="text-xs text-slate-400">
+                              {new Date(comment.created_at).toLocaleDateString('id-ID', {
+                                day: 'numeric', month: 'short', year: 'numeric'
+                              })}
+                            </span>
                           </div>
                           <p className="text-sm text-slate-300 leading-relaxed">
                             {comment.text}
@@ -310,6 +368,11 @@ export default function InteractiveCase() {
                       </div>
                     ))}
                   </div>
+                </div>
+              ) : (
+                <div className="pt-6 border-t border-white/10 text-center py-6">
+                  <MessageSquare className="w-8 h-8 mx-auto mb-2 text-slate-600" />
+                  <p className="text-slate-500 text-sm">Belum ada tanggapan. Jadilah yang pertama!</p>
                 </div>
               )}
             </div>

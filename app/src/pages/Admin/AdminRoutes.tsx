@@ -12,6 +12,7 @@ import ConceptManager from '@/pages/Admin/ConceptManager';
 import UjiAnalisisManager from '@/pages/Admin/UjiAnalisisManager';
 import JurnalManager from '@/pages/Admin/JurnalManager';
 import BukuManager from '@/pages/Admin/BukuManager';
+import KomunitasManager from '@/pages/Admin/KomunitasManager';
 
 export default function AdminRoutes() {
   const isAuthenticated = useAdminStore((state) => state.isAuthenticated);
@@ -33,6 +34,7 @@ export default function AdminRoutes() {
         <Route path="/jurnal" element={<JurnalManager />} />
         <Route path="/buku" element={<BukuManager />} />
         <Route path="/cms" element={<ArticleCMS />} />
+        <Route path="/komunitas" element={<KomunitasManager />} />
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Routes>
     </AdminLayout>

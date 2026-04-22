@@ -1,4 +1,4 @@
-﻿import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { BookOpen, ChevronRight, ChevronLeft, X, Lightbulb, Quote, Award, Layers } from 'lucide-react';
 import { useAdminStore } from '@/store/useAdminStore';
@@ -16,6 +16,7 @@ const STATIC_TOKOH = [
     contribution: "Menciptakan istilah 'sosiologi' dan hukum tiga tahap perkembangan masyarakat.",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Auguste_Comte.jpg/330px-Auguste_Comte.jpg",
     color: "from-amber/30 to-amber/10", accent: "#e8a735",
+    categories: ['Klasik', 'Eropa'],
   },
   {
     id: '2', name: "Émile Durkheim", years: "1858 – 1917", title: "Pelopor Sosiologi Ilmiah",
@@ -23,6 +24,7 @@ const STATIC_TOKOH = [
     contribution: "Mengembangkan konsep fakta sosial, solidaritas organik & mekanik, serta studi ilmiah tentang bunuh diri.",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Emile_Durkheim.jpg/330px-Emile_Durkheim.jpg",
     color: "from-sage/30 to-sage/10", accent: "#5a8a6e",
+    categories: ['Klasik', 'Eropa', 'Pendidikan'],
   },
   {
     id: '3', name: "Max Weber", years: "1864 – 1920", title: "Ahli Birokrasi & Tindakan Sosial",
@@ -30,6 +32,7 @@ const STATIC_TOKOH = [
     contribution: "Teori tindakan sosial, birokrasi ideal, etika Protestan & kapitalisme, serta tiga dimensi stratifikasi sosial.",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Max_Weber_1894.jpg/330px-Max_Weber_1894.jpg",
     color: "from-navy/30 to-navy/10", accent: "#1e3a5f",
+    categories: ['Klasik', 'Eropa', 'Politik'],
   },
   {
     id: '4', name: "Karl Marx", years: "1818 – 1883", title: "Teoritisi Konflik Kelas",
@@ -37,6 +40,7 @@ const STATIC_TOKOH = [
     contribution: "Teori konflik kelas, materialisme historis, alienasi, dan kritik kapitalisme yang menjadi landasan teori kritis.",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Karl_Marx_001.jpg/330px-Karl_Marx_001.jpg",
     color: "from-red-900/30 to-red-900/10", accent: "#7f1d1d",
+    categories: ['Klasik', 'Eropa', 'Kritis', 'Politik'],
   },
   {
     id: '5', name: "Talcott Parsons", years: "1902 – 1979", title: "Arsitek Fungsionalisme Struktural",
@@ -44,12 +48,41 @@ const STATIC_TOKOH = [
     contribution: "Mengembangkan AGIL (Adaptation, Goal-attainment, Integration, Latency) sebagai kerangka analisis sistem sosial.",
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Talcott_Parsons.jpg/330px-Talcott_Parsons.jpg",
     color: "from-purple-900/30 to-purple-900/10", accent: "#581c87",
+    categories: ['Modern', 'Eropa'],
   },
 ];
 
 // ============================================================
 // HELPERS & CONSTANTS
 // ============================================================
+
+// Category badge colors — dark (for cards with dark background)
+const CATEGORY_COLORS: Record<string, string> = {
+  'Klasik':       'bg-amber/20 text-amber border-amber/30',
+  'Modern':       'bg-blue-500/20 text-blue-300 border-blue-500/30',
+  'Kontemporer':  'bg-violet-500/20 text-violet-300 border-violet-500/30',
+  'Indonesia':    'bg-red-500/20 text-red-300 border-red-500/30',
+  'Islam':        'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+  'Eropa':        'bg-sky-500/20 text-sky-300 border-sky-500/30',
+  'Pendidikan':   'bg-orange-500/20 text-orange-300 border-orange-500/30',
+  'Politik':      'bg-slate-400/20 text-slate-300 border-slate-400/30',
+  'Kritis':       'bg-rose-500/20 text-rose-300 border-rose-500/30',
+  'Post Modern':  'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30',
+};
+
+// Category badge colors — light (for modal with white background)
+const CATEGORY_COLORS_LIGHT: Record<string, string> = {
+  'Klasik':       'bg-amber/10 text-amber-dark border-amber/20',
+  'Modern':       'bg-blue-50 text-blue-700 border-blue-200',
+  'Kontemporer':  'bg-violet-50 text-violet-700 border-violet-200',
+  'Indonesia':    'bg-red-50 text-red-700 border-red-200',
+  'Islam':        'bg-emerald-50 text-emerald-700 border-emerald-200',
+  'Eropa':        'bg-sky-50 text-sky-700 border-sky-200',
+  'Pendidikan':   'bg-orange-50 text-orange-700 border-orange-200',
+  'Politik':      'bg-slate-100 text-slate-700 border-slate-300',
+  'Kritis':       'bg-rose-50 text-rose-700 border-rose-200',
+  'Post Modern':  'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200',
+};
 
 const THEORY_THEME: Record<string, { gradient: string; accent: string; label: string }> = {
   konflik: { gradient: 'from-red-950 to-red-900/60', accent: '#ef4444', label: 'Konflik' },
@@ -158,7 +191,21 @@ function TokohModal({
               {tokoh.title}
             </span>
 
-            <h2 className="font-poppins font-bold text-3xl text-white mb-4">{tokoh.name}</h2>
+            <h2 className="font-poppins font-bold text-3xl text-white mb-3">{tokoh.name}</h2>
+
+            {/* Category badges */}
+            {(tokoh.categories ?? []).length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-4">
+                {(tokoh.categories as string[]).map((cat: string) => (
+                  <span
+                    key={cat}
+                    className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${CATEGORY_COLORS_LIGHT[cat] ?? 'bg-slate-100 text-slate-600 border-slate-200'}`}
+                  >
+                    {cat}
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Quote */}
             <div className="flex gap-3 mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
@@ -439,10 +486,50 @@ export default function Teori() {
     return () => clearInterval(t);
   }, [isAutoPlayingTheory, goNextTheory]);
 
-  // —— Timeline ────────────────────────────────────────────────
+  // —— Timeline smart layout ────────────────────────────────────
   const minYear = theoriesWithYear[0]?.startYear ?? 1848;
   const maxYear = theoriesWithYear[theoriesWithYear.length - 1]?.startYear ?? 1974;
   const yearRange = maxYear - minYear || 1;
+
+  // 4-level smart stagger: prevents labels from ever overlapping
+  // Levels: 0=top-far  1=top-near  2=bottom-near  3=bottom-far
+  // Connector heights per level (px): 0→64  1→40  2→40  3→64
+  const { timelineLevels, timelineMinWidth } = useMemo(() => {
+    const count = theoriesWithYear.length;
+    // At least 120px per theory, minimum 900px
+    const minW = Math.max(900, count * 120);
+    // Minimum horizontal gap (px) before the same level can be reused
+    const MIN_GAP = 100;
+    // Cycle order: top-far → bottom-near → top-near → bottom-far
+    const CYCLE = [0, 2, 1, 3];
+    const levelLastX: number[] = [-999, -999, -999, -999];
+
+    const levels = theoriesWithYear.map((theory) => {
+      const xPct = 5 + ((theory.startYear - minYear) / yearRange) * 90;
+      const xPx = (xPct / 100) * minW;
+
+      // Try each level in cycle order, pick first one with enough gap
+      let assigned = CYCLE[0];
+      for (const l of CYCLE) {
+        if (xPx - levelLastX[l] >= MIN_GAP) {
+          assigned = l;
+          break;
+        }
+      }
+      // Fallback: pick level with largest gap
+      if (theoriesWithYear.every((_, __)  => true)) {
+        let maxGap = -1;
+        for (const l of CYCLE) {
+          const gap = xPx - levelLastX[l];
+          if (gap > maxGap) { maxGap = gap; assigned = l; }
+        }
+      }
+      levelLastX[assigned] = xPx;
+      return assigned;
+    });
+
+    return { timelineLevels: levels, timelineMinWidth: minW };
+  }, [theoriesWithYear, minYear, yearRange]);
 
   // Prevent body scroll when modal open
   useEffect(() => {
@@ -540,7 +627,25 @@ export default function Teori() {
                         {isCenter && (
                           <>
                             <p className="text-xs text-white/50 mb-1">{tokoh.years}</p>
-                            <p className="text-[11px] font-bold uppercase tracking-wider mb-3" style={{ color: accentColor }}>{tokoh.title}</p>
+                            <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: accentColor }}>{tokoh.title}</p>
+                            {/* Category badges on card */}
+                            {(tokoh.categories ?? []).length > 0 && (
+                              <div className="flex flex-wrap gap-1 mb-2">
+                                {(tokoh.categories as string[]).slice(0, 2).map((cat: string) => (
+                                  <span
+                                    key={cat}
+                                    className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${CATEGORY_COLORS[cat] ?? 'bg-white/10 text-white/60 border-white/10'}`}
+                                  >
+                                    {cat}
+                                  </span>
+                                ))}
+                                {(tokoh.categories as string[]).length > 2 && (
+                                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded border bg-white/10 text-white/50 border-white/10">
+                                    +{(tokoh.categories as string[]).length - 2}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                             <p className="text-xs text-white/60 leading-relaxed line-clamp-2 italic">"{tokoh.quote}"</p>
                           </>
                         )}
@@ -588,41 +693,77 @@ export default function Teori() {
         </div>
 
         {/* ============================================================ */}
-        {/* TIMELINE HORIZONTAL */}
+        {/* TIMELINE HORIZONTAL — smart 4-level layout */}
         {/* ============================================================ */}
-        <div className="w-full overflow-x-auto custom-scrollbar mb-20 pb-4">
-          <div className="relative min-w-[800px] w-full h-[280px] mx-auto">
+        <div className="w-full overflow-x-auto custom-scrollbar mb-20 pb-6">
+          <div
+            className="relative w-full h-[340px] mx-auto"
+            style={{ minWidth: `${timelineMinWidth}px` }}
+          >
+            {/* Centre axis line */}
             <div className="absolute top-1/2 left-[5%] right-[5%] h-0.5 bg-slate-200 -translate-y-1/2 z-0" />
+
             {theoriesWithYear.map((theory, index) => {
-              const isTop = index % 2 === 0;
               const leftPercent = 5 + ((theory.startYear - minYear) / yearRange) * 90;
               const theme = THEORY_THEME[theory.focus] ?? THEORY_THEME.makna;
+              const level = timelineLevels[index] ?? 0;
+
+              //  level 0 → top-far    (connector h-16)
+              //  level 1 → top-near   (connector h-10)
+              //  level 2 → bottom-near(connector h-10)
+              //  level 3 → bottom-far (connector h-16)
+              const isTop = level === 0 || level === 1;
+              const connectorH = level === 0 || level === 3 ? 'h-16' : 'h-10';
+
               return (
-                <div key={theory.id} className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center" style={{ left: `${leftPercent}%` }}>
+                <div
+                  key={theory.id}
+                  className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center"
+                  style={{ left: `${leftPercent}%` }}
+                >
+                  {/* Dot on the axis */}
                   <div className="w-2.5 h-2.5 rounded-full bg-slate-300 z-10 shadow-sm" />
+
+                  {/* Label + connector — positioned relative to dot */}
                   <div className={`absolute flex flex-col items-center ${isTop ? 'bottom-1' : 'top-1'}`}>
                     {isTop ? (
                       <>
-                        <div className="mb-2 flex flex-col items-center cursor-pointer group" onClick={() => openTheoryModal(theory)}>
-                          <span className="text-amber-dark font-bold text-xs mb-1 bg-white px-2 py-0.5 rounded-md border border-amber/30 shadow-sm">{theory.startYear}</span>
-                          <span className="text-[10px] text-slate-500 text-center w-24 leading-snug group-hover:text-navy transition-colors">{theory.name}</span>
+                        <div
+                          className="mb-2 flex flex-col items-center cursor-pointer group"
+                          onClick={() => openTheoryModal(theory)}
+                        >
+                          <span className="text-amber-dark font-bold text-xs mb-1 bg-white px-2 py-0.5 rounded-md border border-amber/30 shadow-sm whitespace-nowrap">
+                            {theory.startYear}
+                          </span>
+                          <span className="text-[10px] text-slate-500 text-center w-24 leading-snug group-hover:text-navy transition-colors">
+                            {theory.name}
+                          </span>
                         </div>
-                        <button onClick={() => openTheoryModal(theory)}
-                          className="w-5 h-5 rounded-full border-[3px] transition-all z-20 bg-white border-slate-300 hover:scale-125"
+                        <button
+                          onClick={() => openTheoryModal(theory)}
+                          className={`w-5 h-5 rounded-full border-[3px] transition-all z-20 bg-white border-slate-300 hover:scale-125`}
                           style={{ borderColor: theme.accent }}
                         />
-                        <div className="w-0.5 h-10 bg-slate-200" />
+                        <div className={`w-0.5 ${connectorH} bg-slate-200`} />
                       </>
                     ) : (
                       <>
-                        <div className="w-0.5 h-10 bg-slate-200" />
-                        <button onClick={() => openTheoryModal(theory)}
+                        <div className={`w-0.5 ${connectorH} bg-slate-200`} />
+                        <button
+                          onClick={() => openTheoryModal(theory)}
                           className="w-5 h-5 rounded-full border-[3px] transition-all z-20 bg-white border-slate-300 hover:scale-125"
                           style={{ borderColor: theme.accent }}
                         />
-                        <div className="mt-2 flex flex-col items-center cursor-pointer group" onClick={() => openTheoryModal(theory)}>
-                          <span className="text-[10px] text-slate-500 text-center w-24 leading-snug group-hover:text-navy transition-colors mb-1">{theory.name}</span>
-                          <span className="text-amber-dark font-bold text-xs bg-white px-2 py-0.5 rounded-md border border-amber/30 shadow-sm">{theory.startYear}</span>
+                        <div
+                          className="mt-2 flex flex-col items-center cursor-pointer group"
+                          onClick={() => openTheoryModal(theory)}
+                        >
+                          <span className="text-[10px] text-slate-500 text-center w-24 leading-snug group-hover:text-navy transition-colors mb-1">
+                            {theory.name}
+                          </span>
+                          <span className="text-amber-dark font-bold text-xs bg-white px-2 py-0.5 rounded-md border border-amber/30 shadow-sm whitespace-nowrap">
+                            {theory.startYear}
+                          </span>
                         </div>
                       </>
                     )}

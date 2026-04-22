@@ -1,25 +1,10 @@
-import { Users, GraduationCap, Building, Newspaper, Instagram, MessageCircle, ExternalLink, Trophy, User } from "lucide-react";
+import { Users, GraduationCap, Building, Newspaper, Instagram, ExternalLink, Trophy, User } from "lucide-react";
 import { useAdminStore } from "@/store/useAdminStore";
 import BeritaUnesa from "@/components/BeritaUnesa";
 
-// Data komunitas HMP dengan placeholder link
-const komunitasData = [
-  {
-    id: 1,
-    name: "HMP Sosiologi UNESA",
-    university: "Universitas Negeri Surabaya",
-    members: "120+ anggota",
-    description: "Himpunan Mahasiswa Sosiologi UNESA — pusat kegiatan akademik dan pengabdian masyarakat.",
-    avatar: "H",
-    color: "from-sage to-sage-light",
-    instagram: "https://instagram.com/hmpsosiologiunesa",
-    whatsapp: "https://wa.me/6281234567890",
-    category: "Himpunan Resmi",
-  }
-];
-
 export default function Jejaring() {
   const alumniData = useAdminStore((state) => state.alumniData);
+  const communities = useAdminStore((state) => state.communities);
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden py-24">
@@ -34,7 +19,7 @@ export default function Jejaring() {
         <div className="text-center mb-16 animate-fadeIn">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-sage/10 border border-sage/20 rounded-full text-sm text-sage-dark font-bold mb-4">
             <Users className="w-4 h-4" />
-            Kolaborasi & Relasi
+            Kolaborasi &amp; Relasi
           </div>
           <h2 className="font-poppins font-bold text-4xl md:text-5xl text-navy mb-6">Jejaring Sosiologi</h2>
           <p className="text-slate-600 max-w-2xl mx-auto text-lg leading-relaxed">
@@ -97,7 +82,7 @@ export default function Jejaring() {
                 Kabar Sosiologi UNESA
               </div>
               <h3 className="text-3xl font-poppins font-bold text-navy">
-                Berita & Agenda Terbaru
+                Berita &amp; Agenda Terbaru
               </h3>
               <p className="text-slate-600 mt-2 max-w-xl">
                 Ikuti perkembangan, berita terbaru, dan kegiatan dari program studi Sosiologi Universitas Negeri Surabaya.
@@ -120,64 +105,106 @@ export default function Jejaring() {
         <div id="komunitas" className="mb-10">
           <div className="flex items-center gap-3 mb-3">
             <Trophy className="w-8 h-8 text-sage" />
-            <h3 className="font-poppins font-bold text-2xl text-navy">Komunitas & Himpunan Sosiologi</h3>
+            <h3 className="font-poppins font-bold text-2xl text-navy">Komunitas &amp; Himpunan Sosiologi</h3>
           </div>
           <p className="text-slate-600 mb-10 max-w-2xl">
             Temukan komunitas mahasiswa sosiologi dari berbagai kampus. Bergabung, berkolaborasi, dan bangun jejaring akademik yang kuat.
           </p>
 
-          <div className="max-w-4xl mx-auto">
-            {komunitasData.map((komunitas, idx) => (
-              <div
-                key={komunitas.id}
-                className="group relative bg-white border border-slate-200 rounded-3xl p-8 hover:border-amber/40 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden animate-fadeIn flex flex-col md:flex-row items-center gap-8 text-center md:text-left"
-                style={{ animationDelay: `${idx * 80}ms` }}
-              >
-                {/* Category badge */}
-                <div className="absolute top-6 right-6">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-md">
-                    {komunitas.category}
-                  </span>
-                </div>
-
-                {/* Avatar */}
-                <div className={`w-28 h-28 md:w-32 md:h-32 rounded-3xl bg-gradient-to-br ${komunitas.color} flex items-center justify-center text-5xl font-black text-white shadow-xl shrink-0`}>
-                  {komunitas.avatar}
-                </div>
-
-                {/* Content */}
-                <div className="flex-1">
-                  <h4 className="font-poppins font-bold text-navy text-2xl md:text-3xl leading-tight group-hover:text-amber-dark transition-colors">{komunitas.name}</h4>
-                  <p className="text-sm text-slate-500 mt-1 mb-3">{komunitas.university}</p>
-
-                  {/* Members badge */}
-                  <div className="inline-flex items-center gap-1.5 text-xs font-bold text-sage-dark bg-sage/10 border border-sage/20 px-3 py-1.5 rounded-full mb-4">
-                    <Users className="w-4 h-4" />
-                    {komunitas.members}
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-base text-slate-600 leading-relaxed mb-6">
-                    {komunitas.description}
-                  </p>
-
-                  {/* Action Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                    <a
-                      href={komunitas.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-pink-600/80 to-purple-600/80 hover:from-pink-500 hover:to-purple-500 text-white text-sm font-bold transition-all shadow-md hover:shadow-pink-500/30 hover:-translate-y-0.5"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Instagram className="w-4 h-4" />
-                      Instagram
-                    </a>
-                  </div>
-                </div>
+          {communities.length === 0 ? (
+            /* Fallback jika belum ada data dari Supabase */
+            <div className="bg-white rounded-3xl border border-slate-200 p-12 flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 bg-sage/10 rounded-2xl flex items-center justify-center mb-4">
+                <Users className="w-8 h-8 text-sage/50" />
               </div>
-            ))}
-          </div>
+              <p className="text-slate-400 font-medium">Data komunitas belum tersedia.</p>
+              <p className="text-slate-400 text-sm mt-1">Admin dapat menambahkan komunitas melalui panel admin.</p>
+            </div>
+          ) : (
+            /* Grid komunitas — maks 3 kolom, menyesuaikan jumlah data */
+            <div className={`grid gap-6 ${
+              communities.length === 1
+                ? 'grid-cols-1 max-w-xl mx-auto'
+                : communities.length === 2
+                ? 'grid-cols-1 sm:grid-cols-2 max-w-3xl mx-auto'
+                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+            }`}>
+              {communities.map((komunitas, idx) => (
+                <div
+                  key={komunitas.id}
+                  className="group relative bg-white border border-slate-200 rounded-3xl overflow-hidden hover:border-amber/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 animate-fadeIn flex flex-col"
+                  style={{ animationDelay: `${idx * 80}ms` }}
+                >
+                  {/* Photo / Avatar */}
+                  <div className="relative h-48 bg-gradient-to-br from-sage/20 to-navy/10 overflow-hidden">
+                    {komunitas.photo_url ? (
+                      <img
+                        src={komunitas.photo_url}
+                        alt={komunitas.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Users className="w-20 h-20 text-slate-200" />
+                      </div>
+                    )}
+
+                    {/* Category badge */}
+                    {komunitas.category && (
+                      <div className="absolute top-4 left-4">
+                        <span className="text-xs font-bold uppercase tracking-wider text-white bg-navy/70 backdrop-blur-sm px-3 py-1.5 rounded-md">
+                          {komunitas.category}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6 flex flex-col flex-1">
+                    <h4 className="font-poppins font-bold text-navy text-xl leading-tight mb-1 group-hover:text-amber-dark transition-colors">
+                      {komunitas.name}
+                    </h4>
+
+                    {komunitas.university && (
+                      <p className="text-sm text-slate-500 mb-3">{komunitas.university}</p>
+                    )}
+
+                    {komunitas.members && (
+                      <div className="inline-flex items-center gap-1.5 text-xs font-bold text-sage-dark bg-sage/10 border border-sage/20 px-3 py-1.5 rounded-full mb-4 w-max">
+                        <Users className="w-3.5 h-3.5" />
+                        {komunitas.members}
+                      </div>
+                    )}
+
+                    {komunitas.description && (
+                      <p className="text-sm text-slate-600 leading-relaxed mb-5 flex-1 line-clamp-3">
+                        {komunitas.description}
+                      </p>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="mt-auto flex flex-wrap gap-3">
+                      {komunitas.instagram && (
+                        <a
+                          href={komunitas.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-600/80 to-purple-600/80 hover:from-pink-500 hover:to-purple-500 text-white text-sm font-bold transition-all shadow-md hover:shadow-pink-500/30 hover:-translate-y-0.5"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Instagram className="w-4 h-4" />
+                          Instagram
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

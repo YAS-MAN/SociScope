@@ -18,7 +18,8 @@ import {
   UserCircle,
   GraduationCap,
   Library,
-  BookMarked
+  BookMarked,
+  Users
 } from 'lucide-react';
 
 interface Props {
@@ -41,6 +42,7 @@ export default function AdminLayout({ children }: Props) {
     { path: '/admin/jurnal', icon: BookMarked, label: 'Referensi Jurnal' },
     { path: '/admin/buku', icon: Library, label: 'Referensi Buku' },
     { path: '/admin/cms', icon: Newspaper, label: 'Article CMS' },
+    { path: '/admin/komunitas', icon: Users, label: 'Komunitas & HMP' },
   ];
 
   return (

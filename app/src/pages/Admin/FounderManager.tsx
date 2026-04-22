@@ -1,12 +1,39 @@
 import { useState } from 'react';
 import { useAdminStore } from '@/store/useAdminStore';
 import type { Sociologist } from '@/store/useAdminStore';
-import { Plus, Edit2, Trash2, X, Search, UserCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Search, UserCircle, Tag } from 'lucide-react';
 import { toast } from 'sonner';
+
+const SOCIOLOGIST_CATEGORIES = [
+  'Klasik',
+  'Modern',
+  'Kontemporer',
+  'Indonesia',
+  'Islam',
+  'Eropa',
+  'Pendidikan',
+  'Politik',
+  'Kritis',
+  'Post Modern',
+];
+
+const CATEGORY_COLORS: Record<string, string> = {
+  'Klasik':        'bg-amber/10 text-amber-dark border-amber/20',
+  'Modern':        'bg-blue-50 text-blue-700 border-blue-200',
+  'Kontemporer':   'bg-violet-50 text-violet-700 border-violet-200',
+  'Indonesia':     'bg-red-50 text-red-700 border-red-200',
+  'Islam':         'bg-emerald-50 text-emerald-700 border-emerald-200',
+  'Eropa':         'bg-sky-50 text-sky-700 border-sky-200',
+  'Pendidikan':    'bg-orange-50 text-orange-700 border-orange-200',
+  'Politik':       'bg-slate-100 text-slate-700 border-slate-300',
+  'Kritis':        'bg-rose-50 text-rose-700 border-rose-200',
+  'Post Modern':   'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200',
+};
 
 export default function FounderManager() {
   const { sociologists, addSociologist, updateSociologist, deleteSociologist, role } = useAdminStore();
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategory, setFilterCategory] = useState<string>('');
   
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,7 +48,8 @@ export default function FounderManager() {
     bio: '',
     image: '',
     color: 'from-amber/30 to-amber/10',
-    accent: '#e8a735'
+    accent: '#e8a735',
+    categories: [],
   });
 
   const checkRole = () => {
@@ -37,7 +65,7 @@ export default function FounderManager() {
     setEditingId(null);
     setFormData({
       name: '', years: '', title: '', quote: '', contribution: '', bio: '', image: '',
-      color: 'from-amber/30 to-amber/10', accent: '#e8a735'
+      color: 'from-amber/30 to-amber/10', accent: '#e8a735', categories: [],
     });
     setIsModalOpen(true);
   };
@@ -45,7 +73,7 @@ export default function FounderManager() {
   const handleOpenEdit = (tokoh: Sociologist) => {
     if (!checkRole()) return;
     setEditingId(tokoh.id);
-    setFormData(tokoh);
+    setFormData({ ...tokoh, categories: tokoh.categories ?? [] });
     setIsModalOpen(true);
   };
 
@@ -54,6 +82,15 @@ export default function FounderManager() {
     if (confirm('Yakin ingin menghapus tokoh ini?')) {
       deleteSociologist(id);
       toast.success('Tokoh berhasil dihapus');
+    }
+  };
+
+  const toggleCategory = (cat: string) => {
+    const current = formData.categories ?? [];
+    if (current.includes(cat)) {
+      setFormData({ ...formData, categories: current.filter(c => c !== cat) });
+    } else {
+      setFormData({ ...formData, categories: [...current, cat] });
     }
   };
 
@@ -68,21 +105,19 @@ export default function FounderManager() {
       updateSociologist(editingId, formData);
       toast.success('Data tokoh berhasil diperbarui!');
     } else {
-      // Omit id completely so Supabase Auto-Increments via PostgreSQL
-      // Wait, Supabase requires id because it has no default generator
-      // We will generate a safe random integer for integer ids.
       const newTokoh = { ...formData, id: Math.floor(Math.random() * 1000000) };
-      
       addSociologist(newTokoh as any);
       toast.success('Tokoh baru berhasil ditambahkan!');
     }
     setIsModalOpen(false);
   };
 
-  const filteredTokoh = sociologists.filter(s => 
-    s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    s.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredTokoh = sociologists.filter(s => {
+    const matchSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchCat = !filterCategory || (s.categories ?? []).includes(filterCategory);
+    return matchSearch && matchCat;
+  });
 
   return (
     <div className="p-8">
@@ -100,9 +135,10 @@ export default function FounderManager() {
         </button>
       </div>
 
+      {/* Filter & Search */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div className="p-4 border-b border-slate-200">
-          <div className="flex items-center gap-3 bg-slate-50 px-4 py-3 rounded-lg border border-slate-200 w-96">
+        <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row gap-3">
+          <div className="flex items-center gap-3 bg-slate-50 px-4 py-3 rounded-lg border border-slate-200 flex-1 max-w-sm">
             <Search className="w-5 h-5 text-slate-400" />
             <input
               type="text"
@@ -112,6 +148,25 @@ export default function FounderManager() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+
+          {/* Category Filter */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => setFilterCategory('')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${!filterCategory ? 'bg-navy text-white border-navy' : 'bg-white text-slate-600 border-slate-200 hover:border-navy/30'}`}
+            >
+              Semua
+            </button>
+            {SOCIOLOGIST_CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setFilterCategory(filterCategory === cat ? '' : cat)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${filterCategory === cat ? 'bg-amber text-white border-amber' : `${CATEGORY_COLORS[cat]} hover:opacity-80`}`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -120,6 +175,7 @@ export default function FounderManager() {
               <tr className="bg-slate-50 text-slate-500 text-sm">
                 <th className="p-4 font-bold">Profil Tokoh</th>
                 <th className="p-4 font-bold">Tahun Hidup</th>
+                <th className="p-4 font-bold">Klasifikasi</th>
                 <th className="p-4 font-bold max-w-sm">Kontribusi Utama</th>
                 <th className="p-4 font-bold">Aksi</th>
               </tr>
@@ -137,6 +193,19 @@ export default function FounderManager() {
                     </div>
                   </td>
                   <td className="p-4 text-slate-600 font-medium">{tokoh.years}</td>
+                  <td className="p-4">
+                    <div className="flex flex-wrap gap-1">
+                      {(tokoh.categories ?? []).length === 0 ? (
+                        <span className="text-slate-400 text-xs">—</span>
+                      ) : (
+                        (tokoh.categories ?? []).map(cat => (
+                          <span key={cat} className={`text-xs font-bold px-2 py-0.5 rounded-md border ${CATEGORY_COLORS[cat] ?? 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                            {cat}
+                          </span>
+                        ))
+                      )}
+                    </div>
+                  </td>
                   <td className="p-4 text-slate-600 text-sm max-w-sm truncate" title={tokoh.contribution}>
                     {tokoh.contribution}
                   </td>
@@ -161,7 +230,7 @@ export default function FounderManager() {
               
               {filteredTokoh.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="p-8 text-center text-slate-500">
+                  <td colSpan={5} className="p-8 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center">
                       <UserCircle className="w-12 h-12 text-slate-300 mb-3" />
                       <p>Belum ada data tokoh sosiologi.</p>
@@ -212,6 +281,40 @@ export default function FounderManager() {
                     <label className="block text-sm font-bold text-navy mb-2">URL Gambar (Image Link)</label>
                     <input required value={formData.image} onChange={(e) => setFormData({...formData, image: e.target.value})} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-amber text-sm" placeholder="Contoh: https://example.com/photo.jpg" />
                   </div>
+              </div>
+
+              {/* Klasifikasi Multi-Checkbox */}
+              <div>
+                <label className="block text-sm font-bold text-navy mb-3 flex items-center gap-2">
+                  <Tag className="w-4 h-4 text-amber" />
+                  Klasifikasi Tokoh
+                  <span className="text-xs font-normal text-slate-400 ml-1">(bisa lebih dari satu)</span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {SOCIOLOGIST_CATEGORIES.map((cat) => {
+                    const isSelected = (formData.categories ?? []).includes(cat);
+                    return (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => toggleCategory(cat)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all select-none ${
+                          isSelected
+                            ? `${CATEGORY_COLORS[cat]} ring-2 ring-offset-1 ring-amber/40 scale-105`
+                            : 'bg-slate-50 text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-100'
+                        }`}
+                      >
+                        {isSelected && <span className="mr-1">✓</span>}
+                        {cat}
+                      </button>
+                    );
+                  })}
+                </div>
+                {(formData.categories ?? []).length > 0 && (
+                  <p className="text-xs text-slate-400 mt-2">
+                    Dipilih: {(formData.categories ?? []).join(', ')}
+                  </p>
+                )}
               </div>
 
               <div>

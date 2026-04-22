@@ -34,7 +34,7 @@ export default function Footer() {
     Referensi: [
       { label: "Referensi Jurnal", to: "/jurnal" },
       { label: "Referensi Buku", to: "/buku" },
-      { label: "Artikel Sosiologi", to: "https://sosiologi.fisipol.unesa.ac.id/", isExternal: true },
+      { label: "Website Sosiologi UNESA", to: "https://sosiologi.fisipol.unesa.ac.id/", isExternal: true },
     ],
   };
 
@@ -66,7 +66,7 @@ export default function Footer() {
           {/* Brand & Kontak */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-3 mb-6 group w-max">
-              <div className="w-12 h-12 bg-amber rounded-xl overflow-hidden flex items-center justify-center transition-transform group-hover:scale-105 shadow-lg shadow-amber/30">
+              <div className="w-12 h-12 bg-white rounded-xl overflow-hidden flex items-center justify-center transition-transform group-hover:scale-105 shadow-lg shadow-white/30">
                 <img src="/logo_sociozone_raw.png" alt="SocioZone" className="w-full h-full object-contain p-0.5" />
               </div>
               <div>

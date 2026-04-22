@@ -51,6 +51,18 @@ export interface Sociologist {
   image: string;
   color: string;
   accent: string;
+  categories?: string[];
+}
+
+export interface CommunityItem {
+  id: string;
+  name: string;
+  university?: string;
+  description?: string;
+  members?: string;
+  instagram?: string;
+  photo_url?: string;
+  category?: string;
 }
 
 export interface ChatResponse {
@@ -88,6 +100,7 @@ interface AdminState {
   concepts: Concept[];
   teoResponses: ChatResponse[];
   sociologists: Sociologist[];
+  communities: CommunityItem[];
   messages: UserMessage[];
   auditLogs: AuditLog[];
   jurnals: ReferenceItem[];
@@ -119,6 +132,11 @@ interface AdminState {
   addSociologist: (sociologist: Sociologist) => void;
   updateSociologist: (id: string, sociologist: Partial<Sociologist>) => void;
   deleteSociologist: (id: string) => void;
+
+  // Communities
+  addCommunity: (community: CommunityItem) => void;
+  updateCommunity: (id: string, community: Partial<CommunityItem>) => void;
+  deleteCommunity: (id: string) => void;
   
   toggleRssVisibility: (link: string) => void;
   
@@ -165,6 +183,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   concepts: [],
   teoResponses: [],
   sociologists: [],
+  communities: [],
   jurnals: [],
   books: [],
   articles: [],
@@ -200,6 +219,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       const jurnalsData = await fetchSafe('jurnals');
       const booksData = await fetchSafe('books');
       const articlesData = await fetchSafe('articles');
+      const communitiesData = await fetchSafe('communities');
 
       set({
         theories: theoriesData || initialTheories,
@@ -209,6 +229,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
         concepts: conceptsData || [],
         teoResponses: teoData || [],
         sociologists: sociologistsData || [],
+        communities: (communitiesData as CommunityItem[]) || [],
         jurnals: jurnalsData || [],
         books: booksData || [],
         articles: articlesData || [],
@@ -388,6 +409,45 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     }
   },
   
+  // === COMMUNITIES CRUD ===
+  addCommunity: async (community) => {
+    try {
+      const { id: _id, ...payload } = community;
+      const { data, error } = await supabase.from('communities').insert([payload]).select();
+      if (error) throw error;
+      set((state) => ({ communities: [data[0], ...state.communities] }));
+      get().logAction(`Menambah Komunitas: ${community.name}`);
+    } catch (err) {
+      console.error('Add Community Error:', err);
+    }
+  },
+
+  updateCommunity: async (id, updatedFields) => {
+    try {
+      const { error } = await supabase.from('communities').update(updatedFields).eq('id', id);
+      if (error) throw error;
+      set((state) => ({
+        communities: state.communities.map(c => c.id === id ? { ...c, ...updatedFields } : c)
+      }));
+      get().logAction(`Mengupdate Komunitas: ${updatedFields.name || id}`);
+    } catch (err) {
+      console.error('Update Community Error:', err);
+    }
+  },
+
+  deleteCommunity: async (id) => {
+    try {
+      const { error } = await supabase.from('communities').delete().eq('id', id);
+      if (error) throw error;
+      set((state) => ({
+        communities: state.communities.filter(c => c.id !== id)
+      }));
+      get().logAction(`Menghapus Komunitas ID: ${id}`);
+    } catch (err) {
+      console.error('Delete Community Error:', err);
+    }
+  },
+
   toggleRssVisibility: (link) => {
     const hidden = get().hiddenRssLinks;
     const normalize = (l: string) => l.split('?')[0].split('#')[0].trim().replace(/\/$/, '').toLowerCase();

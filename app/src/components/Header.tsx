@@ -20,10 +20,8 @@ export default function Header() {
     location.pathname === '/jejaring' ||
     location.pathname === '/teori' ||
     location.pathname === '/karir' ||
-    location.pathname === '/privasi' ||
     location.pathname === '/buku' ||
-    location.pathname === '/jurnal' ||
-    location.pathname === '/syarat';
+    location.pathname === '/jurnal';
 
   const useDarkText = isScrolled || isLightPage;
 
@@ -50,13 +48,12 @@ export default function Header() {
 
             {/* LOGO */}
             <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center shadow-lg bg-amber shrink-0 border border-amber-light/30">
+              <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center shadow-lg bg-white shrink-0 border border-amber-light/30 shadow-white/10">
                 <img src="/logo_sociozone_raw.png" alt="SocioZone Logo" className="w-full h-full object-contain p-0.5" />
               </div>
               <div className="text-left">
-                <h1 className={`font-poppins font-bold text-lg leading-tight transition-colors ${
-                  useDarkText ? 'text-navy' : 'text-white'
-                }`}>
+                <h1 className={`font-poppins font-bold text-lg leading-tight transition-colors ${useDarkText ? 'text-navy' : 'text-white'
+                  }`}>
                   SocioZone
                 </h1>
               </div>

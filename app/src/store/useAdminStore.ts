@@ -90,7 +90,7 @@ export interface ArticleItem {
 interface AdminState {
   isAuthenticated: boolean;
   role: AdminRole;
-  
+
   theories: Theory[];
   careers: Career[];
   alumniData: AlumniItem[];
@@ -115,12 +115,12 @@ interface AdminState {
   login: (accessKey: string) => boolean;
   logout: () => void;
   setRole: (role: AdminRole) => void;
-  
+
   // Data Mutators
   addTheory: (theory: Theory) => void;
   updateTheory: (id: string, theory: Partial<Theory>) => void;
   deleteTheory: (id: string) => void;
-  
+
   addCareer: (career: Career) => void;
   updateCareer: (id: string, career: Partial<Career>) => void;
   deleteCareer: (id: string) => void;
@@ -137,9 +137,9 @@ interface AdminState {
   addCommunity: (community: CommunityItem) => void;
   updateCommunity: (id: string, community: Partial<CommunityItem>) => void;
   deleteCommunity: (id: string) => void;
-  
+
   toggleRssVisibility: (link: string) => void;
-  
+
   // Kacamata Cases
   addInteractiveCase: (kasus: KacamataCase) => void;
   updateInteractiveCase: (id: string, kasus: Partial<KacamataCase>) => void;
@@ -166,7 +166,7 @@ interface AdminState {
   deleteArticle: (id: number) => void;
 
   replyMessage: (id: string) => void;
-  
+
   logAction: (action: string) => void;
 }
 
@@ -174,7 +174,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   isAuthenticated: false,
   role: 'Super Admin',
   isLoading: false,
-  
+
   theories: initialTheories,
   careers: initialCareers,
   alumniData: alumniData,
@@ -195,7 +195,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   auditLogs: [
     { id: 'log-1', action: 'Sistem SocioZone diinisiasi', timestamp: new Date(), user: 'Super Admin' }
   ],
-  
+
   initFetch: async () => {
     set({ isLoading: true });
     try {
@@ -241,25 +241,25 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       set({ isLoading: false });
     }
   },
-  
+
   login: (accessKey) => {
-    if (accessKey === 'socizone123') {
+    if (accessKey === 'sociozone123') {
       set({ isAuthenticated: true });
       get().logAction('Melakukan Login');
       return true;
     }
     return false;
   },
-  
+
   logout: () => {
     set({ isAuthenticated: false });
   },
-  
+
   setRole: (role) => {
     set({ role });
     get().logAction(`Berubah role menjadi ${role}`);
   },
-  
+
   addTheory: async (theory) => {
     try {
       const { data, error } = await supabase.from('theories').insert([theory]).select();
@@ -270,7 +270,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       console.error(err);
     }
   },
-  
+
   updateTheory: async (id, updatedFields) => {
     try {
       const { error } = await supabase.from('theories').update(updatedFields).eq('id', id);
@@ -283,7 +283,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       console.error(err);
     }
   },
-  
+
   deleteTheory: async (id) => {
     try {
       const theory = get().theories.find(t => t.id === id);
@@ -297,7 +297,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       console.error(err);
     }
   },
-  
+
   addCareer: async (career) => {
     try {
       const { data, error } = await supabase.from('careers').insert([career]).select();
@@ -308,7 +308,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       console.error(err);
     }
   },
-  
+
   updateCareer: async (id, updatedFields) => {
     try {
       const { error } = await supabase.from('careers').update(updatedFields).eq('id', id);
@@ -345,7 +345,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       console.error(err);
     }
   },
-  
+
   updateAlumni: async (id, updatedFields) => {
     try {
       const { error } = await supabase.from('alumni').update(updatedFields).eq('id', id);
@@ -382,7 +382,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       console.error(err);
     }
   },
-  
+
   updateSociologist: async (id, updatedFields) => {
     try {
       const { error } = await supabase.from('sociologists').update(updatedFields).eq('id', id);
@@ -408,7 +408,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       console.error(err);
     }
   },
-  
+
   // === COMMUNITIES CRUD ===
   addCommunity: async (community) => {
     try {
@@ -452,7 +452,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     const hidden = get().hiddenRssLinks;
     const normalize = (l: string) => l.split('?')[0].split('#')[0].trim().replace(/\/$/, '').toLowerCase();
     const target = normalize(link);
-    
+
     let newHidden: string[];
     if (hidden.some(l => normalize(l) === target)) {
       newHidden = hidden.filter(l => normalize(l) !== target);
@@ -461,9 +461,9 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       newHidden = [...hidden, link];
       get().logAction(`Menyembunyikan artikel RSS: ${link}`);
     }
-    
+
     set({ hiddenRssLinks: newHidden });
-    try { localStorage.setItem('sz_hiddenRss', JSON.stringify(newHidden)); } catch {}
+    try { localStorage.setItem('sz_hiddenRss', JSON.stringify(newHidden)); } catch { }
   },
 
   // Interactive Cases CRUD
@@ -516,7 +516,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       console.error(err);
     }
   },
-  
+
   updateConcept: async (id, updatedFields) => {
     try {
       const { error } = await supabase.from('concepts').update(updatedFields).eq('id', id);
@@ -542,7 +542,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       console.error(err);
     }
   },
-  
+
   // === JURNAL CRUD === 
   addJurnal: async (jurnal) => {
     try {
@@ -551,17 +551,17 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       if (error) throw error;
       set((state) => ({ jurnals: [...state.jurnals, data[0]] }));
       get().logAction('Menambahkan Referensi Jurnal: ' + jurnal.title);
-    } catch(e: any) { console.error('Add Jurnal Error:', e); }
+    } catch (e: any) { console.error('Add Jurnal Error:', e); }
   },
   updateJurnal: async (id, jurnal) => {
     try {
       const { data, error } = await supabase.from('jurnals').update(jurnal).eq('id', id).select();
       if (error) throw error;
       if (data && data.length > 0) {
-         set((state) => ({ jurnals: state.jurnals.map(j => j.id === id ? data[0] : j) }));
+        set((state) => ({ jurnals: state.jurnals.map(j => j.id === id ? data[0] : j) }));
       }
       get().logAction('Memperbarui Referensi Jurnal: ' + (jurnal.title || ''));
-    } catch(e: any) { console.error(e); }
+    } catch (e: any) { console.error(e); }
   },
   deleteJurnal: async (id) => {
     try {
@@ -569,7 +569,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       if (error) throw error;
       set((state) => ({ jurnals: state.jurnals.filter(j => j.id !== id) }));
       get().logAction('Menghapus Referensi Jurnal');
-    } catch(e: any) { console.error(e); }
+    } catch (e: any) { console.error(e); }
   },
 
   // === BUKU CRUD === 
@@ -580,17 +580,17 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       if (error) throw error;
       set((state) => ({ books: [...state.books, data[0]] }));
       get().logAction('Menambahkan Referensi Buku: ' + book.title);
-    } catch(e: any) { console.error('Add Book Error:', e); }
+    } catch (e: any) { console.error('Add Book Error:', e); }
   },
   updateBook: async (id, book) => {
     try {
       const { data, error } = await supabase.from('books').update(book).eq('id', id).select();
       if (error) throw error;
       if (data && data.length > 0) {
-         set((state) => ({ books: state.books.map(b => b.id === id ? data[0] : b) }));
+        set((state) => ({ books: state.books.map(b => b.id === id ? data[0] : b) }));
       }
       get().logAction('Memperbarui Referensi Buku: ' + (book.title || ''));
-    } catch(e: any) { console.error(e); }
+    } catch (e: any) { console.error(e); }
   },
   deleteBook: async (id) => {
     try {
@@ -598,7 +598,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       if (error) throw error;
       set((state) => ({ books: state.books.filter(b => b.id !== id) }));
       get().logAction('Menghapus Referensi Buku');
-    } catch(e: any) { console.error(e); }
+    } catch (e: any) { console.error(e); }
   },
 
   // === ARTICLE CRUD === 
@@ -610,17 +610,17 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       if (error) throw error;
       set((state) => ({ articles: [...state.articles, data[0]] }));
       get().logAction('Menambahkan Artikel: ' + article.title);
-    } catch(e: any) { console.error('addArticle error:', e); }
+    } catch (e: any) { console.error('addArticle error:', e); }
   },
   updateArticle: async (id, article) => {
     try {
       const { data, error } = await supabase.from('articles').update(article).eq('id', id).select();
       if (error) throw error;
       if (data && data.length > 0) {
-         set((state) => ({ articles: state.articles.map(a => a.id === id ? data[0] : a) }));
+        set((state) => ({ articles: state.articles.map(a => a.id === id ? data[0] : a) }));
       }
       get().logAction('Memperbarui Artikel: ' + (article.title || ''));
-    } catch(e: any) { console.error(e); }
+    } catch (e: any) { console.error(e); }
   },
   deleteArticle: async (id) => {
     try {
@@ -628,7 +628,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       if (error) throw error;
       set((state) => ({ articles: state.articles.filter(a => a.id !== id) }));
       get().logAction('Menghapus Artikel ID: ' + id);
-    } catch(e: any) { console.error(e); }
+    } catch (e: any) { console.error(e); }
   },
 
   replyMessage: (id) => {
@@ -637,7 +637,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     }));
     get().logAction(`Membalas pesan ID: ${id}`);
   },
-  
+
   logAction: (action) => {
     const newLog: AuditLog = {
       id: Date.now().toString(),

@@ -243,7 +243,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   },
   
   login: (accessKey) => {
-    if (accessKey === 'admin123') {
+    if (accessKey === 'socizone123') {
       set({ isAuthenticated: true });
       get().logAction('Melakukan Login');
       return true;

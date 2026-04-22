@@ -24,6 +24,7 @@ export default function TheoryManager() {
     year: '',
     scale: 'makro',
     focus: 'konflik',
+    classification: 'Klasik',
     difficulty: 'sedang',
     description: '',
     objects: [],
@@ -50,7 +51,7 @@ export default function TheoryManager() {
     if (!checkRole()) return;
     setEditingId(null);
     setFormData({
-      name: '', founder: '', year: '', scale: 'makro', focus: 'konflik', difficulty: 'sedang',
+      name: '', founder: '', year: '', scale: 'makro', focus: 'konflik', classification: 'Klasik', difficulty: 'sedang',
       description: '', objects: [], keyConcepts: [],
       objectsText: '', keyConceptsText: '',
       exampleCase: { title: '', description: '', analysis: '' }
@@ -140,7 +141,7 @@ export default function TheoryManager() {
                 <th className="p-4">Nama Teori</th>
                 <th className="p-4">Tokoh</th>
                 <th className="p-4">Tahun</th>
-                <th className="p-4">Skala & Fokus</th>
+                <th className="p-4">Era & Skala & Fokus</th>
                 <th className="p-4 text-center">Aksi</th>
               </tr>
             </thead>
@@ -154,7 +155,8 @@ export default function TheoryManager() {
                   <td className="p-4 font-medium text-slate-600 text-sm whitespace-nowrap">{theory.founder}</td>
                   <td className="p-4 text-slate-500 text-sm font-mono">{theory.year}</td>
                   <td className="p-4">
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
+                       <span className="px-2 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-md text-[10px] font-bold uppercase">{theory.classification}</span>
                        <span className="px-2 py-1 bg-sage/10 text-sage-dark border border-sage/20 rounded-md text-[10px] font-bold uppercase">{theory.scale}</span>
                        <span className="px-2 py-1 bg-amber/10 text-amber-700 border border-amber/20 rounded-md text-[10px] font-bold uppercase">{theory.focus}</span>
                     </div>
@@ -227,6 +229,14 @@ export default function TheoryManager() {
                     <option value="mudah">Mudah</option>
                     <option value="sedang">Sedang</option>
                     <option value="lanjut">Lanjut</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-navy mb-2">Klasifikasi/Era</label>
+                  <select value={formData.classification} onChange={(e) => setFormData({...formData, classification: e.target.value as "Klasik" | "Modern" | "Post Modern"})} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-amber text-sm">
+                    <option value="Klasik">Klasik</option>
+                    <option value="Modern">Modern</option>
+                    <option value="Post Modern">Post Modern</option>
                   </select>
                 </div>
                 <div>

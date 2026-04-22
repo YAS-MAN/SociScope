@@ -79,7 +79,7 @@ export default function Home() {
               <div className="relative">
                 <div className="w-80 h-80 bg-gradient-to-br from-sage/30 to-amber/30 rounded-full flex items-center justify-center">
                   <div className="w-64 h-64 bg-gradient-to-br from-sage/50 to-amber/50 rounded-full flex items-center justify-center">
-                    <div className="w-48 h-48 bg-amber rounded-full flex items-center justify-center shadow-2xl animate-float relative z-10 overflow-hidden">
+                    <div className="w-48 h-48 bg-amber-300 rounded-full flex items-center justify-center shadow-2xl animate-float relative z-10 overflow-hidden">
                       <img src="/logo_sociozone_raw.png" alt="SocioZone" className="w-36 h-36 object-contain" />
                     </div>
                   </div>

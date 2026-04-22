@@ -33,6 +33,7 @@ export interface Theory {
     description: string;
     analysis: string;
   };
+  classification: "Klasik" | "Modern" | "Post Modern";
 }
 
 // Tipe data untuk Konsep Kacamata Sosiologi
@@ -79,6 +80,7 @@ export const theories: Theory[] = [
     focus: "konsensus",
     objects: ["institusi", "negara", "budaya"],
     difficulty: "mudah",
+    classification: "Klasik",
     description:
       "Teori yang melihat masyarakat sebagai sistem yang saling terkait, di mana setiap bagian memiliki fungsi untuk menjaga stabilitas keseluruhan. Masyarakat diibaratkan seperti organ tubuh yang saling bekerja sama.",
     keyConcepts: [
@@ -105,6 +107,7 @@ export const theories: Theory[] = [
     focus: "konflik",
     objects: ["ekonomi", "negara", "institusi"],
     difficulty: "sedang",
+    classification: "Klasik",
     description:
       "Teori yang melihat masyarakat sebagai arena pertarungan antar kelas, terutama antara pemilik alat produksi (borjuis) dan pekerja (proletar). Perubahan sosial terjadi melalui revolusi.",
     keyConcepts: [
@@ -131,6 +134,7 @@ export const theories: Theory[] = [
     focus: "konflik",
     objects: ["institusi", "budaya", "negara"],
     difficulty: "sedang",
+    classification: "Klasik",
     description:
       "Weber memperluas analisis konflik di luar ekonomi. Ia melihat dominasi juga berasal dari status sosial dan kekuasaan politik. Konflik bersumber dari tiga sumber: kelas, status, dan partai.",
     keyConcepts: [
@@ -157,6 +161,7 @@ export const theories: Theory[] = [
     focus: "makna",
     objects: ["individu", "budaya"],
     difficulty: "mudah",
+    classification: "Modern",
     description:
       "Teori yang fokus pada bagaimana individu membuat makna melalui interaksi sehari-hari. Manusia dilihat sebagai aktor aktif yang menafsirkan simbol-simbol dalam kehidupan bersama.",
     keyConcepts: [
@@ -183,6 +188,7 @@ export const theories: Theory[] = [
     focus: "makna",
     objects: ["individu", "budaya"],
     difficulty: "lanjut",
+    classification: "Modern",
     description:
       "Teori yang menekankan bagaimana orang mengalami dan memaknai dunia sehari-hari. Realitas sosial adalah konstruksi yang diciptakan melalui proses saling memahami.",
     keyConcepts: [
@@ -209,6 +215,7 @@ export const theories: Theory[] = [
     focus: "makna",
     objects: ["individu"],
     difficulty: "lanjut",
+    classification: "Modern",
     description:
       "Studi tentang metode-metode yang digunakan orang untuk membuat sense dari situasi sosial. Fokus pada praktik-praktik sehari-hari yang biasanya tidak disadari.",
     keyConcepts: [
@@ -235,6 +242,7 @@ export const theories: Theory[] = [
     focus: "konsensus",
     objects: ["individu", "ekonomi"],
     difficulty: "sedang",
+    classification: "Modern",
     description:
       "Teori yang melihat interaksi sosial sebagai pertukaran sumber daya (materiil maupun non-materiil) yang bertujuan memaksimalkan keuntungan dan meminimalkan kerugian.",
     keyConcepts: ["Profit", "Investasi", "Reward", "Cost", "Equity"],
@@ -255,6 +263,7 @@ export const theories: Theory[] = [
     focus: "konflik",
     objects: ["institusi", "budaya", "negara"],
     difficulty: "sedang",
+    classification: "Post Modern",
     description:
       "Teori yang menganalisis hubungan kuasa berdasarkan gender. Feminisme menunjukkan bagaimana struktur sosial, budaya, dan politik menciptakan ketidaksetaraan antara laki-laki dan perempuan.",
     keyConcepts: [
@@ -281,6 +290,7 @@ export const theories: Theory[] = [
     focus: "makna",
     objects: ["individu", "institusi", "budaya"],
     difficulty: "sedang",
+    classification: "Post Modern",
     description:
       'Teori yang menjelaskan bagaimana pengetahuan dan realitas diciptakan, dipelihara, dan diubah melalui interaksi sosial. Apa yang kita anggap "nyata" adalah hasil proses sosial.',
     keyConcepts: [
@@ -307,6 +317,7 @@ export const theories: Theory[] = [
     focus: "perubahan",
     objects: ["negara", "ekonomi", "teknologi"],
     difficulty: "lanjut",
+    classification: "Post Modern",
     description:
       "Teori yang menganalisis kapitalisme sebagai sistem dunia yang terintegrasi. Dunia dibagi menjadi inti (core), setengah-periferi (semi-periphery), dan periferi (periphery).",
     keyConcepts: [

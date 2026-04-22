@@ -8,6 +8,7 @@ interface FormData {
   focus: string;
   objects: string[];
   difficulty: string;
+  classification: string;
 }
 
 interface Recommendation {
@@ -22,7 +23,8 @@ export default function TheoryRecommender() {
     scale: '',
     focus: '',
     objects: [],
-    difficulty: ''
+    difficulty: '',
+    classification: ''
   });
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -70,7 +72,7 @@ export default function TheoryRecommender() {
       }
 
       // Objek match (20 poin)
-      const matchingObjects = theory.objects.filter(obj => 
+      const matchingObjects = theory.objects.filter(obj =>
         formData.objects.includes(obj)
       );
       if (matchingObjects.length > 0) {
@@ -95,6 +97,17 @@ export default function TheoryRecommender() {
         reasons.push('Kesulitan mendekati preferensi');
       }
 
+      // Klasifikasi / Era match (15 poin)
+      if (formData.classification && formData.classification !== 'bebas') {
+        if (theory.classification === formData.classification) {
+          score += 15;
+          reasons.push(`Era ${formData.classification}`);
+        }
+      } else if (formData.classification === 'bebas') {
+        score += 5; // Bonus kecil untuk fleksibilitas
+        reasons.push(`Bebas era`);
+      }
+
       return { theory, matchScore: score, reasons };
     });
 
@@ -106,18 +119,18 @@ export default function TheoryRecommender() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.scale && formData.focus && formData.difficulty) {
+    if (formData.scale && formData.focus && formData.difficulty && formData.classification) {
       calculateRecommendations();
     }
   };
 
   const resetForm = () => {
-    setFormData({ scale: '', focus: '', objects: [], difficulty: '' });
+    setFormData({ scale: '', focus: '', objects: [], difficulty: '', classification: '' });
     setShowResults(false);
     setSelectedTheory(null);
   };
 
-  const isFormValid = formData.scale && formData.focus && formData.difficulty;
+  const isFormValid = formData.scale && formData.focus && formData.difficulty && formData.classification;
 
   return (
     <div className="w-full text-white">
@@ -131,7 +144,7 @@ export default function TheoryRecommender() {
               Teori Recommender Engine
             </h3>
             <p className="text-slate-400">
-              Jawab 4 pertanyaan singkat untuk mendapatkan rekomendasi teori sosiologi yang paling cocok untuk kasusmu.
+              Jawab 5 pertanyaan singkat untuk mendapatkan rekomendasi teori sosiologi yang paling cocok untuk kasusmu.
             </p>
           </div>
 
@@ -152,11 +165,10 @@ export default function TheoryRecommender() {
                     key={option.id}
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, scale: option.id }))}
-                    className={`p-4 rounded-xl border text-left transition-all duration-300 ${
-                      formData.scale === option.id
+                    className={`p-4 rounded-xl border text-left transition-all duration-300 ${formData.scale === option.id
                         ? 'border-amber bg-amber/15 shadow-[0_0_15px_rgba(232,167,53,0.15)]'
                         : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-amber/50'
-                    }`}
+                      }`}
                   >
                     <div className={`font-bold ${formData.scale === option.id ? 'text-amber-light' : 'text-white'}`}>{option.label}</div>
                     <div className="text-xs text-slate-400 mt-1">{option.desc}</div>
@@ -182,11 +194,10 @@ export default function TheoryRecommender() {
                     key={option.id}
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, focus: option.id }))}
-                    className={`p-4 rounded-xl border text-left transition-all duration-300 ${
-                      formData.focus === option.id
+                    className={`p-4 rounded-xl border text-left transition-all duration-300 ${formData.focus === option.id
                         ? 'border-amber bg-amber/15 shadow-[0_0_15px_rgba(232,167,53,0.15)]'
                         : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-amber/50'
-                    }`}
+                      }`}
                   >
                     <div className={`font-bold ${formData.focus === option.id ? 'text-amber-light' : 'text-white'}`}>{option.label}</div>
                     <div className="text-xs text-slate-400 mt-1">{option.desc}</div>
@@ -207,11 +218,10 @@ export default function TheoryRecommender() {
                     key={option.id}
                     type="button"
                     onClick={() => handleObjectToggle(option.id)}
-                    className={`p-3 rounded-xl border text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
-                      formData.objects.includes(option.id)
+                    className={`p-3 rounded-xl border text-sm transition-all duration-300 flex items-center justify-center gap-2 ${formData.objects.includes(option.id)
                         ? 'border-amber bg-amber/15 text-amber-light shadow-[0_0_15px_rgba(232,167,53,0.15)] font-bold'
                         : 'border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:border-amber/50'
-                    }`}
+                      }`}
                   >
                     <option.icon className="w-4 h-4" />
                     {option.label}
@@ -236,13 +246,41 @@ export default function TheoryRecommender() {
                     key={option.id}
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, difficulty: option.id }))}
-                    className={`p-4 rounded-xl border text-left transition-all duration-300 ${
-                      formData.difficulty === option.id
+                    className={`p-4 rounded-xl border text-left transition-all duration-300 ${formData.difficulty === option.id
                         ? 'border-amber bg-amber/15 shadow-[0_0_15px_rgba(232,167,53,0.15)]'
                         : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-amber/50'
-                    }`}
+                      }`}
                   >
                     <div className={`font-bold ${formData.difficulty === option.id ? 'text-amber-light' : 'text-white'}`}>{option.label}</div>
+                    <div className="text-xs text-slate-400 mt-1">{option.desc}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Pertanyaan 5: Era / Klasifikasi */}
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium text-white/90 mb-3">
+                <Lightbulb className="w-4 h-4 text-amber" />
+                5. Preferensi Era Klasifikasi Teori?
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { id: 'Klasik', label: 'Klasik', desc: 'Awal mula' },
+                  { id: 'Modern', label: 'Modern', desc: 'Abad 20' },
+                  { id: 'Post Modern', label: 'Post Modern', desc: 'Kontemporer' },
+                  { id: 'bebas', label: 'Bebas', desc: 'Semua Era' }
+                ].map(option => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, classification: option.id }))}
+                    className={`p-4 rounded-xl border text-left transition-all duration-300 ${formData.classification === option.id
+                        ? 'border-amber bg-amber/15 shadow-[0_0_15px_rgba(232,167,53,0.15)]'
+                        : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-amber/50'
+                      }`}
+                  >
+                    <div className={`font-bold ${formData.classification === option.id ? 'text-amber-light' : 'text-white'}`}>{option.label}</div>
                     <div className="text-xs text-slate-400 mt-1">{option.desc}</div>
                   </button>
                 ))}
@@ -284,20 +322,18 @@ export default function TheoryRecommender() {
             {recommendations.map((rec, index) => (
               <div
                 key={rec.theory.id}
-                className={`p-5 rounded-2xl border cursor-pointer transition-all duration-500 bg-white/5 ${
-                  selectedTheory?.id === rec.theory.id
+                className={`p-5 rounded-2xl border cursor-pointer transition-all duration-500 bg-white/5 ${selectedTheory?.id === rec.theory.id
                     ? 'border-amber shadow-[0_0_25px_rgba(232,167,53,0.15)] ring-1 ring-amber/30'
                     : 'border-white/10 hover:border-amber/50 hover:bg-white/10'
-                }`}
+                  }`}
                 onClick={() => setSelectedTheory(selectedTheory?.id === rec.theory.id ? null : rec.theory)}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-navy-dark font-bold text-lg shadow-lg ${
-                      index === 0 ? 'bg-gradient-to-br from-amber to-amber-light' : 
-                      index === 1 ? 'bg-gradient-to-br from-slate-300 to-slate-400' : 
-                      'bg-gradient-to-br from-amber-900 to-amber-800 text-amber-100'
-                    }`}>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-navy-dark font-bold text-lg shadow-lg ${index === 0 ? 'bg-gradient-to-br from-amber to-amber-light' :
+                        index === 1 ? 'bg-gradient-to-br from-slate-300 to-slate-400' :
+                          'bg-gradient-to-br from-amber-900 to-amber-800 text-amber-100'
+                      }`}>
                       #{index + 1}
                     </div>
                     <div>
@@ -324,14 +360,13 @@ export default function TheoryRecommender() {
                 </div>
 
                 {/* Detail teori (expandable smoothly) */}
-                <div className={`grid transition-all duration-500 ease-in-out ${
-                    selectedTheory?.id === rec.theory.id 
-                      ? 'grid-rows-[1fr] opacity-100 mt-5 pt-5 border-t border-white/10' 
-                      : 'grid-rows-[0fr] opacity-0 mt-0 pt-0 border-t-0 border-transparent'
-                }`}>
+                <div className={`grid transition-all duration-500 ease-in-out ${selectedTheory?.id === rec.theory.id
+                    ? 'grid-rows-[1fr] opacity-100 mt-5 pt-5 border-t border-white/10'
+                    : 'grid-rows-[0fr] opacity-0 mt-0 pt-0 border-t-0 border-transparent'
+                  }`}>
                   <div className="overflow-hidden">
                     <p className="text-sm text-slate-300 mb-5 leading-relaxed">{rec.theory.description}</p>
-                    
+
                     <div className="mb-5">
                       <h5 className="text-[10px] font-bold text-white/50 uppercase tracking-[2px] mb-2 flex items-center gap-2">
                         <Lightbulb className="w-3 h-3 text-amber" />
@@ -374,7 +409,7 @@ export default function TheoryRecommender() {
 function LandmarkIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 22h18"/><path d="M6 18v-7l6-6 6 6v7"/><path d="M9 22v-4h6v4"/><path d="M10 11h4"/>
+      <path d="M3 22h18" /><path d="M6 18v-7l6-6 6 6v7" /><path d="M9 22v-4h6v4" /><path d="M10 11h4" />
     </svg>
   );
 }
@@ -382,7 +417,7 @@ function LandmarkIcon({ className }: { className?: string }) {
 function BuildingIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 22h18"/><path d="M6 18v-8l6-4 6 4v8"/><path d="M10 22v-4h4v4"/>
+      <path d="M3 22h18" /><path d="M6 18v-8l6-4 6 4v8" /><path d="M10 22v-4h4v4" />
     </svg>
   );
 }
@@ -390,7 +425,7 @@ function BuildingIcon({ className }: { className?: string }) {
 function TrendingUpIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/>
+      <path d="M23 6l-9.5 9.5-5-5L1 18" /><path d="M17 6h6v6" />
     </svg>
   );
 }
@@ -398,7 +433,7 @@ function TrendingUpIcon({ className }: { className?: string }) {
 function CpuIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M9 2v2"/><path d="M9 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/>
+      <rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" /><path d="M15 2v2" /><path d="M15 20v2" /><path d="M9 2v2" /><path d="M9 20v2" /><path d="M2 15h2" /><path d="M2 9h2" /><path d="M20 15h2" /><path d="M20 9h2" />
     </svg>
   );
 }
@@ -406,7 +441,7 @@ function CpuIcon({ className }: { className?: string }) {
 function PaletteIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12"/><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M12 12a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
+      <circle cx="12" cy="12" r="10" /><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12" /><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" /><path d="M12 12a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />
     </svg>
   );
 }

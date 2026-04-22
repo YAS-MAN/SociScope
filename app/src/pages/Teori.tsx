@@ -462,15 +462,19 @@ export default function Teori() {
     return () => clearInterval(t);
   }, [isAutoPlayingTokoh, goNextTokoh]);
 
+  // —— Theory Classification Filter ────────────────────────────
+  const [activeFilter, setActiveFilter] = useState('Semua');
+
   // —— Theory Carousel ─────────────────────────────────────────
   const [activeTheorySlide, setActiveTheorySlide] = useState(0);
   const [isAutoPlayingTheory, setIsAutoPlayingTheory] = useState(true);
 
   const theoriesWithYear = useMemo(() => {
     return [...theories]
+      .filter(t => activeFilter === 'Semua' || t.classification === activeFilter)
       .map(t => ({ ...t, startYear: parseInt(t.year.match(/\d{4}/)?.[0] || '1900') }))
       .sort((a, b) => a.startYear - b.startYear);
-  }, [theories]);
+  }, [theories, activeFilter]);
 
   const goNextTheory = useCallback(() => {
     setActiveTheorySlide(p => (p + 1) % theoriesWithYear.length);
@@ -695,6 +699,26 @@ export default function Teori() {
         {/* ============================================================ */}
         {/* TIMELINE HORIZONTAL — smart 4-level layout */}
         {/* ============================================================ */}
+        
+        {/* Filter Pills */}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex bg-white border border-slate-200 p-1.5 rounded-full shadow-sm">
+            {['Semua', 'Klasik', 'Modern', 'Post Modern'].map(f => (
+              <button
+                key={f}
+                onClick={() => { setActiveFilter(f); setActiveTheorySlide(0); }}
+                className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+                  activeFilter === f 
+                    ? 'bg-amber text-navy shadow-md shadow-amber/20' 
+                    : 'text-slate-500 hover:text-navy hover:bg-slate-50'
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="w-full overflow-x-auto custom-scrollbar mb-20 pb-6">
           <div
             className="relative w-full h-[340px] mx-auto"

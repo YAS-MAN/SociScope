@@ -4,7 +4,7 @@ import { type Theory } from '@/data/sociologyData';
 import { useAdminStore } from '@/store/useAdminStore';
 
 interface FormData {
-  scale: string;
+  scale: string[];
   focus: string;
   objects: string[];
   difficulty: string;
@@ -20,7 +20,7 @@ interface Recommendation {
 export default function TheoryRecommender() {
   const theories = useAdminStore((state) => state.theories);
   const [formData, setFormData] = useState<FormData>({
-    scale: '',
+    scale: [],
     focus: '',
     objects: [],
     difficulty: '',
@@ -54,9 +54,9 @@ export default function TheoryRecommender() {
       const reasons: string[] = [];
 
       // Skala match (40 poin)
-      if (theory.scale === formData.scale) {
+      if (formData.scale.some(s => theory.scale.includes(s as any))) {
         score += 40;
-        reasons.push(`Cocok dengan skala ${formData.scale}`);
+        reasons.push(`Cocok dengan skala ${formData.scale.join(', ')}`);
       }
 
       // Fokus match (30 poin)
@@ -119,18 +119,18 @@ export default function TheoryRecommender() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.scale && formData.focus && formData.difficulty && formData.classification) {
+    if (formData.scale.length > 0 && formData.focus && formData.difficulty && formData.classification) {
       calculateRecommendations();
     }
   };
 
   const resetForm = () => {
-    setFormData({ scale: '', focus: '', objects: [], difficulty: '', classification: '' });
+    setFormData({ scale: [], focus: '', objects: [], difficulty: '', classification: '' });
     setShowResults(false);
     setSelectedTheory(null);
   };
 
-  const isFormValid = formData.scale && formData.focus && formData.difficulty && formData.classification;
+  const isFormValid = formData.scale.length > 0 && formData.focus && formData.difficulty && formData.classification;
 
   return (
     <div className="w-full text-white">
@@ -164,13 +164,19 @@ export default function TheoryRecommender() {
                   <button
                     key={option.id}
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, scale: option.id }))}
-                    className={`p-4 rounded-xl border text-left transition-all duration-300 ${formData.scale === option.id
+                    onClick={() => {
+                      const current = formData.scale;
+                      const next = current.includes(option.id)
+                        ? current.filter(s => s !== option.id)
+                        : [...current, option.id];
+                      setFormData(prev => ({ ...prev, scale: next }));
+                    }}
+                    className={`p-4 rounded-xl border text-left transition-all duration-300 ${formData.scale.includes(option.id)
                         ? 'border-amber bg-amber/15 shadow-[0_0_15px_rgba(232,167,53,0.15)]'
                         : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-amber/50'
                       }`}
                   >
-                    <div className={`font-bold ${formData.scale === option.id ? 'text-amber-light' : 'text-white'}`}>{option.label}</div>
+                    <div className={`font-bold ${formData.scale.includes(option.id) ? 'text-amber-light' : 'text-white'}`}>{option.label}</div>
                     <div className="text-xs text-slate-400 mt-1">{option.desc}</div>
                   </button>
                 ))}
@@ -365,7 +371,7 @@ export default function TheoryRecommender() {
                     : 'grid-rows-[0fr] opacity-0 mt-0 pt-0 border-t-0 border-transparent'
                   }`}>
                   <div className="overflow-hidden">
-                    <p className="text-sm text-slate-300 mb-5 leading-relaxed">{rec.theory.description}</p>
+                    <p className="text-sm text-slate-300 mb-5 leading-relaxed whitespace-pre-line">{rec.theory.description}</p>
 
                     <div className="mb-5">
                       <h5 className="text-[10px] font-bold text-white/50 uppercase tracking-[2px] mb-2 flex items-center gap-2">
@@ -388,10 +394,10 @@ export default function TheoryRecommender() {
                       <h5 className="text-[10px] font-bold text-amber-light/60 uppercase tracking-[2px] mb-2">
                         Contoh Kasus: {rec.theory.exampleCase.title}
                       </h5>
-                      <p className="text-sm text-slate-300 mb-3">{rec.theory.exampleCase.description}</p>
+                      <p className="text-sm text-slate-300 mb-3 whitespace-pre-line">{rec.theory.exampleCase.description}</p>
                       <p className="text-sm text-amber-light/90 italic border-l-2 border-amber pl-3">
                         <span className="font-bold not-italic block mb-1">Analisis:</span>
-                        {rec.theory.exampleCase.analysis}
+                        <span className="whitespace-pre-line">{rec.theory.exampleCase.analysis}</span>
                       </p>
                     </div>
                   </div>

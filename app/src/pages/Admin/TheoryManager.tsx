@@ -22,7 +22,7 @@ export default function TheoryManager() {
     name: '',
     founder: '',
     year: '',
-    scale: 'makro',
+    scale: ['makro'],
     focus: 'konflik',
     classification: 'Klasik',
     difficulty: 'sedang',
@@ -51,7 +51,7 @@ export default function TheoryManager() {
     if (!checkRole()) return;
     setEditingId(null);
     setFormData({
-      name: '', founder: '', year: '', scale: 'makro', focus: 'konflik', classification: 'Klasik', difficulty: 'sedang',
+      name: '', founder: '', year: '', scale: ['makro'], focus: 'konflik', classification: 'Klasik', difficulty: 'sedang',
       description: '', objects: [], keyConcepts: [],
       objectsText: '', keyConceptsText: '',
       exampleCase: { title: '', description: '', analysis: '' }
@@ -64,6 +64,7 @@ export default function TheoryManager() {
     setEditingId(theory.id);
     setFormData({
       ...theory,
+      scale: Array.isArray(theory.scale) ? theory.scale : [theory.scale], // resilient to legacy string data
       objectsText: theory.objects?.join(', '),
       keyConceptsText: theory.keyConcepts?.join(', ')
     });
@@ -157,7 +158,7 @@ export default function TheoryManager() {
                   <td className="p-4">
                     <div className="flex flex-wrap gap-2">
                        <span className="px-2 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-md text-[10px] font-bold uppercase">{theory.classification}</span>
-                       <span className="px-2 py-1 bg-sage/10 text-sage-dark border border-sage/20 rounded-md text-[10px] font-bold uppercase">{theory.scale}</span>
+                       <span className="px-2 py-1 bg-sage/10 text-sage-dark border border-sage/20 rounded-md text-[10px] font-bold uppercase">{Array.isArray(theory.scale) ? theory.scale.join(', ') : theory.scale}</span>
                        <span className="px-2 py-1 bg-amber/10 text-amber-700 border border-amber/20 rounded-md text-[10px] font-bold uppercase">{theory.focus}</span>
                     </div>
                   </td>
@@ -240,12 +241,32 @@ export default function TheoryManager() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-navy mb-2">Skala</label>
-                  <select value={formData.scale} onChange={(e) => setFormData({...formData, scale: e.target.value as "makro" | "meso" | "mikro"})} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-amber text-sm">
-                    <option value="makro">Makro</option>
-                    <option value="meso">Meso</option>
-                    <option value="mikro">Mikro</option>
-                  </select>
+                  <label className="block text-sm font-bold text-navy mb-2">Skala (Pilih Satu atau Lebih)</label>
+                  <div className="flex flex-wrap gap-2 p-2 bg-slate-50 border border-slate-200 rounded-xl">
+                    {['makro', 'meso', 'mikro'].map(s => {
+                      const isSelected = formData.scale?.includes(s as any);
+                      return (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => {
+                            const current = formData.scale || [];
+                            const next = current.includes(s as any)
+                              ? current.filter(x => x !== s)
+                              : [...current, s as any];
+                            setFormData({ ...formData, scale: next });
+                          }}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all border ${
+                            isSelected
+                              ? 'bg-sage text-white border-sage shadow-sm'
+                              : 'bg-white text-slate-400 border-slate-200 hover:border-sage/50 hover:text-sage'
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-navy mb-2">Fokus</label>

@@ -322,9 +322,15 @@ function TheoryModal({
             <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border ${DIFF_STYLE[theory.difficulty]}`}>
               {theory.difficulty}
             </span>
-            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-white/10 text-white border border-white/20">
-              {theory.scale}
-            </span>
+            {Array.isArray(theory.scale) ? theory.scale.map(s => (
+              <span key={s} className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-white/10 text-white border border-white/20">
+                {s}
+              </span>
+            )) : (
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-white/10 text-white border border-white/20">
+                {theory.scale}
+              </span>
+            )}
             <span
               className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border"
               style={{ color: theme.accent, borderColor: `${theme.accent}40`, background: `${theme.accent}15` }}
@@ -346,7 +352,7 @@ function TheoryModal({
           {/* Description */}
           <div>
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-3">Deskripsi</span>
-            <p className="text-slate-700 leading-relaxed">{theory.description}</p>
+            <p className="text-slate-700 leading-relaxed whitespace-pre-line">{theory.description}</p>
           </div>
 
           {/* Key Concepts */}
@@ -371,10 +377,10 @@ function TheoryModal({
               📍 Contoh Kasus Indonesia
             </span>
             <h4 className="font-poppins font-bold text-navy mb-2">{theory.exampleCase.title}</h4>
-            <p className="text-sm text-slate-600 leading-relaxed mb-3">{theory.exampleCase.description}</p>
+            <p className="text-sm text-slate-600 leading-relaxed mb-3 whitespace-pre-line">{theory.exampleCase.description}</p>
             <div className="pt-3 border-t border-slate-200">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Analisis</span>
-              <p className="text-sm text-slate-600 leading-relaxed">{theory.exampleCase.analysis}</p>
+              <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{theory.exampleCase.analysis}</p>
             </div>
           </div>
 

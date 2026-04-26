@@ -22,7 +22,7 @@ export interface Theory {
   name: string;
   founder: string;
   year: string;
-  scale: "makro" | "meso" | "mikro";
+  scale: ("makro" | "meso" | "mikro")[];
   focus: "konflik" | "konsensus" | "makna" | "perubahan";
   objects: string[];
   difficulty: "mudah" | "sedang" | "lanjut";
@@ -76,7 +76,7 @@ export const theories: Theory[] = [
     name: "Struktural Fungsionalisme",
     founder: "Emile Durkheim, Talcott Parsons",
     year: "1893-1950an",
-    scale: "makro",
+    scale: ["makro"],
     focus: "konsensus",
     objects: ["institusi", "negara", "budaya"],
     difficulty: "mudah",
@@ -103,7 +103,7 @@ export const theories: Theory[] = [
     name: "Teori Konflik Marxis",
     founder: "Karl Marx, Friedrich Engels",
     year: "1848-1883",
-    scale: "makro",
+    scale: ["makro"],
     focus: "konflik",
     objects: ["ekonomi", "negara", "institusi"],
     difficulty: "sedang",
@@ -130,7 +130,7 @@ export const theories: Theory[] = [
     name: "Teori Konflik Weberian",
     founder: "Max Weber",
     year: "1904-1920",
-    scale: "makro",
+    scale: ["makro"],
     focus: "konflik",
     objects: ["institusi", "budaya", "negara"],
     difficulty: "sedang",
@@ -157,7 +157,7 @@ export const theories: Theory[] = [
     name: "Interaksionisme Simbolik",
     founder: "George Herbert Mead, Herbert Blumer",
     year: "1930an-1960an",
-    scale: "mikro",
+    scale: ["mikro"],
     focus: "makna",
     objects: ["individu", "budaya"],
     difficulty: "mudah",
@@ -184,7 +184,7 @@ export const theories: Theory[] = [
     name: "Fenomenologi Sosial",
     founder: "Alfred Schutz, Peter Berger",
     year: "1960an-1970an",
-    scale: "mikro",
+    scale: ["mikro"],
     focus: "makna",
     objects: ["individu", "budaya"],
     difficulty: "lanjut",
@@ -211,7 +211,7 @@ export const theories: Theory[] = [
     name: "Etnometodologi",
     founder: "Harold Garfinkel",
     year: "1967",
-    scale: "mikro",
+    scale: ["mikro"],
     focus: "makna",
     objects: ["individu"],
     difficulty: "lanjut",
@@ -238,7 +238,7 @@ export const theories: Theory[] = [
     name: "Teori Pertukaran Rasional",
     founder: "George Homans, Peter Blau",
     year: "1960an-1970an",
-    scale: "mikro",
+    scale: ["mikro"],
     focus: "konsensus",
     objects: ["individu", "ekonomi"],
     difficulty: "sedang",
@@ -259,7 +259,7 @@ export const theories: Theory[] = [
     name: "Teori Feminis",
     founder: "Simone de Beauvoir, Patricia Hill Collins",
     year: "1949-sekarang",
-    scale: "makro",
+    scale: ["makro"],
     focus: "konflik",
     objects: ["institusi", "budaya", "negara"],
     difficulty: "sedang",
@@ -286,7 +286,7 @@ export const theories: Theory[] = [
     name: "Konstruksi Sosial dari Realitas",
     founder: "Peter Berger & Thomas Luckmann",
     year: "1966",
-    scale: "meso",
+    scale: ["meso"],
     focus: "makna",
     objects: ["individu", "institusi", "budaya"],
     difficulty: "sedang",
@@ -313,7 +313,7 @@ export const theories: Theory[] = [
     name: "Teori Sistem Dunia",
     founder: "Immanuel Wallerstein",
     year: "1974",
-    scale: "makro",
+    scale: ["makro"],
     focus: "perubahan",
     objects: ["negara", "ekonomi", "teknologi"],
     difficulty: "lanjut",

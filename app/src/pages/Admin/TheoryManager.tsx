@@ -62,9 +62,31 @@ export default function TheoryManager() {
   const handleOpenEdit = (theory: Theory) => {
     if (!checkRole()) return;
     setEditingId(theory.id);
+
+    // Normalisasi scale agar tombol toggle tampil benar
+    // (data dari DB bisa berupa string JSON yang belum diparse)
+    let safeScale: ("makro" | "meso" | "mikro")[];
+    const raw = theory.scale as any;
+    if (Array.isArray(raw)) {
+      safeScale = raw.map((s: any) =>
+        String(s).replace(/^"+|"+$/g, '').toLowerCase().trim()
+      ).filter(s => ['makro', 'meso', 'mikro'].includes(s)) as any;
+    } else if (typeof raw === 'string') {
+      let str = raw.trim().replace(/\\"/g, '"');
+      if (str.startsWith('[')) {
+        try { str = JSON.parse(str); } catch { /* ignore */ }
+      }
+      const parts = Array.isArray(str) ? str : str.split(',');
+      safeScale = parts
+        .map((s: any) => String(s).replace(/^[\s"'[]+|[\s"'\]]+$/g, '').toLowerCase().trim())
+        .filter(s => ['makro', 'meso', 'mikro'].includes(s)) as any;
+    } else {
+      safeScale = ['makro'];
+    }
+
     setFormData({
       ...theory,
-      scale: Array.isArray(theory.scale) ? theory.scale : [theory.scale], // resilient to legacy string data
+      scale: safeScale,
       objectsText: theory.objects?.join(', '),
       keyConceptsText: theory.keyConcepts?.join(', ')
     });

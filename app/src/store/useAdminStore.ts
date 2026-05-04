@@ -170,6 +170,50 @@ interface AdminState {
   logAction: (action: string) => void;
 }
 
+/**
+ * Normalise the `scale` field yang datang dari Supabase.
+ * Kolom `scale` di DB bertipe text, sehingga array bisa tersimpan dalam
+ * berbagai format rusak:
+ *   - proper array  : ["makro"]          → sudah benar
+ *   - JSON string   : '["makro"]'        → parse JSON
+ *   - escaped JSON  : '[\"makro\"]'      → unescape lalu parse
+ *   - plain string  : 'makro'            → bungkus jadi array
+ *   - comma string  : 'makro,meso'       → split
+ */
+function normalizeScale(raw: any): ("makro" | "meso" | "mikro")[] {
+  if (Array.isArray(raw)) {
+    // Already array — pastikan elemennya string lowercase valid
+    return raw
+      .map((s: any) => {
+        if (typeof s !== 'string') return null;
+        // Kadang elemen sendiri masih JSON: '"makro"'
+        const cleaned = s.replace(/^"+|"+$/g, '').toLowerCase().trim();
+        return ['makro', 'meso', 'mikro'].includes(cleaned) ? cleaned : null;
+      })
+      .filter(Boolean) as ("makro" | "meso" | "mikro")[];
+  }
+
+  if (typeof raw === 'string') {
+    let str = raw.trim();
+    // Hapus escape backslash ganda: [\"makro\"] → ["makro"]
+    str = str.replace(/\\"/g, '"');
+    // Coba parse sebagai JSON array
+    if (str.startsWith('[')) {
+      try {
+        const parsed = JSON.parse(str);
+        if (Array.isArray(parsed)) return normalizeScale(parsed);
+      } catch { /* bukan JSON valid, lanjut */ }
+    }
+    // Plain string atau comma-separated
+    return str
+      .split(',')
+      .map(s => s.replace(/^[\s"'[]+|[\s"'\]]+$/g, '').toLowerCase().trim())
+      .filter(s => ['makro', 'meso', 'mikro'].includes(s)) as ("makro" | "meso" | "mikro")[];
+  }
+
+  return ['makro']; // fallback
+}
+
 export const useAdminStore = create<AdminState>((set, get) => ({
   isAuthenticated: false,
   role: 'Super Admin',
@@ -222,7 +266,11 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       const communitiesData = await fetchSafe('communities');
 
       set({
-        theories: theoriesData || initialTheories,
+        // Normalisasi field `scale` dari semua teori yang diambil dari DB
+        // karena kolom bertipe text, nilainya bisa berupa string JSON rusak
+        theories: theoriesData
+          ? (theoriesData as any[]).map(t => ({ ...t, scale: normalizeScale(t.scale) }))
+          : initialTheories,
         careers: careersData || initialCareers,
         alumniData: (alumniDataRes as AlumniItem[]) || alumniData,
         kacamataCases: casesData || [],
@@ -262,7 +310,9 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
   addTheory: async (theory) => {
     try {
-      const { data, error } = await supabase.from('theories').insert([theory]).select();
+      // Pastikan scale dikirim sebagai array bersih ke Supabase
+      const payload = { ...theory, scale: normalizeScale(theory.scale) };
+      const { data, error } = await supabase.from('theories').insert([payload]).select();
       if (error) throw error;
       set((state) => ({ theories: [...state.theories, data[0]] }));
       get().logAction(`Menambah Teori baru: ${theory.name}`);
@@ -273,10 +323,15 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
   updateTheory: async (id, updatedFields) => {
     try {
-      const { error } = await supabase.from('theories').update(updatedFields).eq('id', id);
+      // Normalisasi scale jika ikut diupdate
+      const payload = updatedFields.scale !== undefined
+        ? { ...updatedFields, scale: normalizeScale(updatedFields.scale) }
+        : updatedFields;
+      const { error } = await supabase.from('theories').update(payload).eq('id', id);
       if (error) throw error;
       set((state) => ({
-        theories: state.theories.map(t => t.id === id ? { ...t, ...updatedFields } : t)
+        // Gunakan payload (sudah ternormalisasi) bukan updatedFields mentah
+        theories: state.theories.map(t => t.id === id ? { ...t, ...payload } : t)
       }));
       get().logAction(`Mengupdate Teori: ${updatedFields.name || id}`);
     } catch (err) {

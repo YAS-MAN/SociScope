@@ -1,6 +1,6 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { BookOpen, ChevronRight, ChevronLeft, X, Lightbulb, Quote, Award, Layers } from 'lucide-react';
+import { BookOpen, ChevronRight, ChevronLeft, X, Quote, Search } from 'lucide-react';
 import { useAdminStore } from '@/store/useAdminStore';
 import { supabase } from '@/lib/supabase';
 import type { Theory } from '@/data/sociologyData';
@@ -101,20 +101,43 @@ function trackClick(type: 'tokoh' | 'theory', itemId: string, itemName: string) 
   supabase.from('click_events').insert([{ type, item_id: itemId, item_name: itemName }]).then(() => { });
 }
 
+/**
+ * Pencocokan nama tokoh ke teori menggunakan logika:
+ * 1. Exact full-name match (case-insensitive)
+ * 2. Whole-word match untuk setiap bagian nama yang signifikan (>3 huruf)
+ *    — mencegah false-positive seperti "Georg" cocok ke "George"
+ */
+function nameMatchesFounder(tokohName: string, founderString: string): boolean {
+  const tokohLower = tokohName.toLowerCase().trim();
+  // Pecah founder string berdasarkan koma / tanda & menjadi nama-nama individual
+  const founderNames = founderString.toLowerCase().split(/[,&]+/).map(n => n.trim()).filter(Boolean);
+
+  for (const fname of founderNames) {
+    // Cek 1: exact full-name match
+    if (fname === tokohLower) return true;
+    if (fname.includes(tokohLower)) return true;
+
+    // Cek 2: whole-word match — setiap kata penting dari tokohName
+    // harus muncul sebagai kata penuh (bukan substring) di salah satu nama founder
+    const tokohParts = tokohLower.split(/\s+/).filter(p => p.length > 3);
+    if (tokohParts.length > 0) {
+      const fnameParts = fname.split(/\s+/);
+      // Semua bagian nama tokoh harus cocok secara whole-word di fname
+      const allMatch = tokohParts.every(part =>
+        fnameParts.some(fp => fp === part)
+      );
+      if (allMatch) return true;
+    }
+  }
+  return false;
+}
+
 function getRelatedTheories(theories: Theory[], tokohName: string): Theory[] {
-  const parts = tokohName.toLowerCase().split(/\s+/).filter(p => p.length > 3);
-  return theories.filter(t => {
-    const f = t.founder.toLowerCase();
-    return f.includes(tokohName.toLowerCase()) || parts.some(p => f.includes(p));
-  });
+  return theories.filter(t => nameMatchesFounder(tokohName, t.founder));
 }
 
 function getRelatedTokoh(tokohList: any[], theory: Theory): any[] {
-  const founder = theory.founder.toLowerCase();
-  return tokohList.filter(t => {
-    const parts = t.name.toLowerCase().split(/\s+/).filter((p: string) => p.length > 3);
-    return founder.includes(t.name.toLowerCase()) || parts.some((p: string) => founder.includes(p));
-  });
+  return tokohList.filter(t => nameMatchesFounder(t.name, theory.founder));
 }
 
 function carouselOffset(i: number, active: number, total: number): number {
@@ -468,6 +491,58 @@ export default function Teori() {
     return () => clearInterval(t);
   }, [isAutoPlayingTokoh, goNextTokoh]);
 
+  // —— Global Search ─────────────────────────────────────────────
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const searchResults = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q || q.length < 2) return { tokoh: [], theories: [] };
+
+    const matchedTokoh = displaySociologists.filter(t =>
+      t.name.toLowerCase().includes(q) ||
+      t.title?.toLowerCase().includes(q) ||
+      t.contribution?.toLowerCase().includes(q) ||
+      t.categories?.some((c: string) => c.toLowerCase().includes(q))
+    );
+
+    const matchedTheories = theories.filter(t =>
+      t.name.toLowerCase().includes(q) ||
+      t.founder.toLowerCase().includes(q) ||
+      t.description?.toLowerCase().includes(q) ||
+      t.keyConcepts?.some(k => k.toLowerCase().includes(q)) ||
+      t.focus?.toLowerCase().includes(q) ||
+      t.classification?.toLowerCase().includes(q)
+    );
+
+    return { tokoh: matchedTokoh.slice(0, 4), theories: matchedTheories.slice(0, 5) };
+  }, [searchQuery, displaySociologists, theories]);
+
+  const hasSearchResults = searchResults.tokoh.length > 0 || searchResults.theories.length > 0;
+  const showDropdown = isSearchFocused && searchQuery.trim().length >= 2;
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setIsSearchFocused(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  // Close on Escape
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setIsSearchFocused(false); setSearchQuery(''); }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
+
   // —— Theory Classification Filter ────────────────────────────
   const [activeFilter, setActiveFilter] = useState('Semua');
 
@@ -567,6 +642,145 @@ export default function Teori() {
           <p className="text-slate-600 max-w-2xl mx-auto text-lg leading-relaxed">
             Pelajari teori sosiologi dari klasik hingga kontemporer, lengkap dengan tokoh, konsep kunci, dan contoh kasus di Indonesia.
           </p>
+        </div>
+
+        {/* ============================================================ */}
+        {/* GLOBAL SEARCH BAR */}
+        {/* ============================================================ */}
+        <div ref={searchRef} className="relative max-w-2xl mx-auto mb-14">
+          {/* Input */}
+          <div className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl border-2 bg-white shadow-lg transition-all duration-300 ${
+            isSearchFocused
+              ? 'border-amber shadow-amber/15 shadow-xl'
+              : 'border-slate-200 shadow-slate-100'
+          }`}>
+            <Search className={`w-5 h-5 shrink-0 transition-colors duration-200 ${
+              isSearchFocused ? 'text-amber' : 'text-slate-400'
+            }`} />
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              placeholder="Cari tokoh sosiolog, teori, konsep kunci..."
+              className="flex-1 bg-transparent text-navy text-sm font-medium placeholder:text-slate-400 outline-none min-w-0"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => { setSearchQuery(''); searchInputRef.current?.focus(); }}
+                className="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors shrink-0"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Dropdown Results */}
+          {showDropdown && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-slate-200 shadow-2xl shadow-slate-200/80 z-50 overflow-hidden animate-fadeIn">
+              {!hasSearchResults ? (
+                <div className="p-6 text-center">
+                  <Search className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                  <p className="text-sm text-slate-400">Tidak ditemukan hasil untuk <span className="font-bold text-navy">"{searchQuery}"</span></p>
+                </div>
+              ) : (
+                <div className="max-h-[420px] overflow-y-auto custom-scrollbar">
+                  {/* Tokoh Results */}
+                  {searchResults.tokoh.length > 0 && (
+                    <div>
+                      <div className="px-4 pt-3 pb-1.5">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tokoh Sosiolog</span>
+                      </div>
+                      {searchResults.tokoh.map(tokoh => {
+                        const accentColor = tokoh.accent === '#1e3a5f' ? '#3b82f6' : tokoh.accent;
+                        return (
+                          <button
+                            key={tokoh.id}
+                            onMouseDown={() => {
+                              setIsSearchFocused(false);
+                              setSearchQuery('');
+                              openTokohModal(tokoh);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left group"
+                          >
+                            <div className="w-9 h-9 rounded-xl overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
+                              <img
+                                src={tokoh.image}
+                                alt={tokoh.name}
+                                className="w-full h-full object-cover object-top"
+                                onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-navy group-hover:text-amber-dark transition-colors truncate">{tokoh.name}</p>
+                              <p className="text-xs text-slate-400 truncate">{tokoh.title} · {tokoh.years}</p>
+                            </div>
+                            <span
+                              className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full border shrink-0"
+                              style={{ color: accentColor, borderColor: `${accentColor}30`, background: `${accentColor}10` }}
+                            >
+                              Tokoh
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Divider */}
+                  {searchResults.tokoh.length > 0 && searchResults.theories.length > 0 && (
+                    <div className="mx-4 border-t border-slate-100" />
+                  )}
+
+                  {/* Theory Results */}
+                  {searchResults.theories.length > 0 && (
+                    <div>
+                      <div className="px-4 pt-3 pb-1.5">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Teori Sosiologi</span>
+                      </div>
+                      {searchResults.theories.map(theory => {
+                        const theme = THEORY_THEME[theory.focus] ?? THEORY_THEME.makna;
+                        return (
+                          <button
+                            key={theory.id}
+                            onMouseDown={() => {
+                              setIsSearchFocused(false);
+                              setSearchQuery('');
+                              openTheoryModal(theory);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left group"
+                          >
+                            <div
+                              className="w-9 h-9 rounded-xl shrink-0 flex items-center justify-center"
+                              style={{ background: `${theme.accent}15`, border: `1px solid ${theme.accent}30` }}
+                            >
+                              <BookOpen className="w-4 h-4" style={{ color: theme.accent }} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-navy group-hover:text-amber-dark transition-colors truncate">{theory.name}</p>
+                              <p className="text-xs text-slate-400 truncate">{theory.founder} · {theory.year.match(/\d{4}/)?.[0]}</p>
+                            </div>
+                            <span
+                              className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full border shrink-0"
+                              style={{ color: theme.accent, borderColor: `${theme.accent}30`, background: `${theme.accent}10` }}
+                            >
+                              {theme.label}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Footer hint */}
+                  <div className="px-4 py-2 border-t border-slate-100 bg-slate-50/50">
+                    <p className="text-[10px] text-slate-400 text-center">Klik hasil untuk membuka detail · ESC untuk menutup</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* ============================================================ */}

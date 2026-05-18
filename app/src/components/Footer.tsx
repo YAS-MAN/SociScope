@@ -13,7 +13,7 @@ export default function Footer() {
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
 
-  type FooterLink = { label: string; to: string; isExternal?: boolean }
+  type FooterLink = { label: string; to: string; isExternal?: boolean };
   const footerLinks: Record<string, FooterLink[]> = {
     "Belajar Sosiologi": [
       { label: "Kacamata Sosiologi", to: "/kacamata" },
@@ -34,26 +34,34 @@ export default function Footer() {
     Referensi: [
       { label: "Referensi Jurnal", to: "/jurnal" },
       { label: "Referensi Buku", to: "/buku" },
-      { label: "Website Sosiologi UNESA", to: "https://sosiologi.fisipol.unesa.ac.id/", isExternal: true },
+      {
+        label: "Website Sosiologi UNESA",
+        to: "https://sosiologi.fisipol.unesa.ac.id/",
+        isExternal: true,
+      },
     ],
   };
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, to: string, isExternal?: boolean) => {
+  const handleLinkClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    to: string,
+    isExternal?: boolean,
+  ) => {
     if (isExternal) return; // biarkan browser membuka link eksternal
 
-    const [targetPath, targetHash] = to.split('#');
+    const [targetPath, targetHash] = to.split("#");
 
-    if (pathname === targetPath || (pathname === '/' && targetPath === '')) {
+    if (pathname === targetPath || (pathname === "/" && targetPath === "")) {
       e.preventDefault();
       if (targetHash) {
         const el = document.getElementById(targetHash);
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
+          el.scrollIntoView({ behavior: "smooth" });
         } else {
           navigate(to);
         }
       } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     }
   };
@@ -67,7 +75,11 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-3 mb-6 group w-max">
               <div className="w-12 h-12 bg-white rounded-xl overflow-hidden flex items-center justify-center transition-transform group-hover:scale-105 shadow-lg shadow-white/30">
-                <img src="/logo_sociozone_raw.png" alt="SocioZone" className="w-full h-full object-contain p-0.5" />
+                <img
+                  src="/logo_sociozone_raw.png"
+                  alt="SocioZone"
+                  className="w-full h-full object-contain p-0.5"
+                />
               </div>
               <div>
                 <h2 className="font-poppins font-bold text-2xl">SocioZone</h2>
@@ -83,16 +95,16 @@ export default function Footer() {
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-4">
               <a
-                href="mailto:hello@sociozone.id"
+                href="hello.sociozone@gmail.com"
                 className="flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors group w-max"
               >
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-sage/20 transition-colors">
                   <Mail className="w-4 h-4 text-sage" />
                 </div>
-                <span>hello@sociozone.id</span>
+                <span>hello.sociozone@gmail.com</span>
               </a>
               <a
-                href="tel:+6281234567890"
+                href="tel:+6281292349096"
                 className="flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors group w-max"
               >
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-sage/20 transition-colors">
@@ -145,7 +157,9 @@ export default function Footer() {
                     ) : (
                       <Link
                         to={link.to}
-                        onClick={(e) => handleLinkClick(e, link.to, link.isExternal as any)}
+                        onClick={(e) =>
+                          handleLinkClick(e, link.to, link.isExternal as any)
+                        }
                         className="text-sm text-slate-400 hover:text-sage-light transition-all flex items-center gap-2 group w-max"
                       >
                         <span className="relative">

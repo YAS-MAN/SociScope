@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sociozone.vercel.app/sitemap.xml

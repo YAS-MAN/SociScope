@@ -59,7 +59,7 @@ export default function AdminLayout({ children }: Props) {
       <aside className={`w-72 bg-navy text-white flex flex-col fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-amber rounded-xl overflow-hidden flex items-center justify-center shadow-lg shrink-0">
+            <div className="w-10 h-10 bg-white rounded-xl overflow-hidden flex items-center justify-center shadow-lg shrink-0 border border-amber-light/30 shadow-white/10">
               <img src="/logo_sociozone_raw.png" alt="SocioZone" className="w-full h-full object-contain p-0.5" />
             </div>
             <div>

@@ -72,7 +72,7 @@ export default function Privasi() {
           <div className="mt-12 p-6 bg-slate-50 border border-slate-200 rounded-2xl">
             <h3 className="font-bold text-navy mb-2">Punya pertanyaan soal privasi?</h3>
             <p className="text-sm text-slate-500 mb-0">
-              Jika Anda memiliki pertanyaan mendalam terkait pengumpulan data di platform SocioZone, Anda bisa menghubungi kami langsung di email resmi <strong>hello@sociozone.id</strong>.
+              Jika Anda memiliki pertanyaan mendalam terkait pengumpulan data di platform SocioZone, Anda bisa menghubungi kami langsung di email resmi <strong>hello.sociozone@gmail.com</strong>.
             </p>
           </div>
         </div>

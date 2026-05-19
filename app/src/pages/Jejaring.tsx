@@ -136,19 +136,21 @@ export default function Jejaring() {
                   style={{ animationDelay: `${idx * 80}ms` }}
                 >
                   {/* Photo / Avatar */}
-                  <div className="relative h-48 bg-gradient-to-br from-sage/20 to-navy/10 overflow-hidden">
+                  <div className="relative h-48 bg-slate-50 shrink-0 border-b border-slate-100/50 flex items-center justify-center overflow-hidden group-hover:bg-amber/10 transition-colors duration-300">
+                    <div className="absolute inset-0 bg-navy/5 group-hover:bg-transparent transition-colors z-10" />
                     {komunitas.photo_url ? (
                       <img
                         src={komunitas.photo_url}
                         alt={komunitas.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-contain p-8 relative z-20 group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
+                          (e.target as HTMLImageElement).src = "/logo_unesa_raw.png";
+                          (e.target as HTMLImageElement).className = "w-full h-full object-contain p-8 opacity-40 grayscale relative z-20";
                         }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Users className="w-20 h-20 text-slate-200" />
+                      <div className="w-full h-full flex items-center justify-center relative z-20">
+                        <Users className="w-16 h-16 text-slate-300" />
                       </div>
                     )}
 

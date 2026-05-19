@@ -70,7 +70,7 @@ export default function Syarat() {
           <div className="mt-12 p-6 bg-sage/5 border border-sage/20 rounded-2xl">
             <h3 className="font-bold text-navy mb-2">Bantuan & Laporan</h3>
             <p className="text-sm text-slate-500 mb-0">
-              Jika Anda menemukan kekeliruan dalam materi sosiologi yang disajikan di situs ini, menemukan tautan yang mati, atau memiliki saran pengembangan platform, Anda dipersilakan melaporkannya ke tim kurator kami di <strong>hello@sociozone.id</strong>.
+              Jika Anda menemukan kekeliruan dalam materi sosiologi yang disajikan di situs ini, menemukan tautan yang mati, atau memiliki saran pengembangan platform, Anda dipersilakan melaporkannya ke tim kurator kami di <strong>hello.sociozone@gmail.com</strong>.
             </p>
           </div>
         </div>
